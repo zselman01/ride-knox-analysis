@@ -60,3 +60,7 @@ The arrivals per dock for S06 and S08 have substantially declined from 2025 (ave
 
 \- Continue to monitor the impact of the Day Pass on riders for more months. Keep Bearden to allow it to continue to grow, and watch Sequoyah to see if anything changes before relocating it. Keep an eye on the June plateau in the new station.
 
+
+
+I did not have a minimum duration sentence in this file, but here is one. The minimum cutoff for a ride is now 1 min (it already originally was 2 min).
+
