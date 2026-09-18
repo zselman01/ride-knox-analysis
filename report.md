@@ -1,10 +1,10 @@
-\*\*TO:\*\* Ride Knox, Board  
+\*\*TO:\*\* Ride Knox, Board
 
-\*\*FROM:\*\* Zaharia Selman, Ride Knox Data Scientist  
+\*\*FROM:\*\* Zaharia Selman, Ride Knox Data Scientist
 
-\*\*DATE:\*\* September 14, 2026  
+\*\*DATE:\*\* September 14, 2026
 
-\*\*SUBJECT:\*\* Python Module Project, One Year Later: "Did the Day Pass Work?" 
+\*\*SUBJECT:\*\* Python Module Project, One Year Later: "Did the Day Pass Work?"
 
 
 
@@ -30,7 +30,7 @@ Comparing June 2025 to June 2026, \~44% (31,260 total trips) to \~44% (34,771 to
 
 
 
-(2) 
+(2)
 
 The arrivals per dock for S06 and S08 have substantially declined from 2025 (average of about 53 arrivals/dock combined for both stations) to 2026 (average of about 36 arrivals/dock combined for both stations). For the idle stations (S24 and S23) from 2025, they both have the lowest trip count (981 and 1075 trips) and departures per dock (98.1 and 89.6 dep/dock). However, Bearden (S23), appears to be growing more/faster than Sequoyah (S24). For the new station (S25), it is in the top 10 for both the number of departures per dock and the total number of trips, even though it has only been in operation for 4 months!
 
@@ -48,7 +48,9 @@ The arrivals per dock for S06 and S08 have substantially declined from 2025 (ave
 
 \## Limitations
 
-\- Our data for a few variables is only over a short period of time. There are stations that have been excluded because they were missing both end station IDs and end times. We should collect information from our rider that could be influencing their riding (e.g., reasons for riding, etc.). 
+\- Our data for a few variables is only over a short period of time. There are stations that have been excluded because they were missing both end station IDs and end times. We should collect information from our rider that could be influencing their riding (e.g., reasons for riding, etc.).
+
+* The one minute cutoff rule implemented in the analysis causes us to lose data points that may otherwise influence our analysis.
 
 
 
