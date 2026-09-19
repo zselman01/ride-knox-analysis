@@ -259,7 +259,6 @@
 \## Part 8
 
 \*\*Output\*\*
-
 * a5c3a76 (HEAD -> master, origin/master, origin/HEAD) Conflict resolved and wording of limitations from master branch was chosen
 * a38c0fb Add rewording again for limitation about the maximum duration cutoff
 * 738a546 Add rewording for limitation about the maximum duration cutoff
@@ -274,9 +273,8 @@
 * 4590767 Add analysis and charts to support answers to ridership questions
 * 37a3231 Add manager's report answering ridership questions
 
-\----------
+* From TODO 8b: Recovery test performed on September 18, 2026.
 
-* 
 
 
 
