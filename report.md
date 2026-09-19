@@ -51,7 +51,7 @@ The arrivals per dock for S06 and S08 have substantially declined from 2025 (ave
 \- Our data for a few variables is only over a short period of time. There are stations that have been excluded because they were missing both end station IDs and end times. We should collect information from our rider that could be influencing their riding (e.g., reasons for riding, etc.).
 
 * The one minute cutoff rule implemented in the analysis causes us to lose data points that may otherwise influence our analysis.
-* We excluded trips longer than 24 hours (bikes likely never docked properly)
+* We excluded trips longer than 24 hours (bikes likely never docked properly).
 
 
 
