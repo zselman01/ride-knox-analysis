@@ -273,12 +273,21 @@
 * 4590767 Add analysis and charts to support answers to ridership questions
 * 37a3231 Add manager's report answering ridership questions
 
+\----------
+
 * From TODO 8b: Recovery test performed on September 18, 2026.
 
+\----------
+
+* Command: git pull
+* Output: Auto-merging WORKLOG.md
+CONFLICT (content): Merge conflict in WORKLOG.md
+Automatic merge failed; fix conflicts and then commit the result.
+
+* I needed to update the changes I made to the master WORKLOG.md before merging the two. I made the appropriate changes so now the line appears in the original folder's WORKLOG.md file.
 
 
-
-\*\*Q:\*\*
+\*\*Q8: Cloning neutralizes the version soup disaster because we had one version in the clone that we could merge with the master branch. Committing early and pushing often (at every stopping point), makes the protection actually hold.\*\*
 
 
 
@@ -288,11 +297,35 @@
 
 \*\*Output\*\*
 
-* 
+* 692d227 (HEAD -> throw-away) Added the period back in throw-away branch to diverge from master branch (**branch splits/diverges**) <--------- If we made a new change to master/main, this is where a future merge would not be able to fast-forward bc master/main would have changed since we branched
+* dd2eee2 (master) Made a change in the throw-away branch (removed a period in a sentence) to complete Part 9: Challenge (main)
+*   50441a2 (origin/master, origin/HEAD) Commit from cloned branch merged with master branch (main)
+|\  
+| * f1f8ae4 Add recovery test performed (branch merged)
+* | 7cf5029 Updated WORKLOG.md (branch splits)
+|/  
+*   a5c3a76 Conflict resolved and wording of limitations from master branch was chosen (main)
+|\  
+| * 738a546 Add rewording for limitation about the maximum duration cutoff (branch merged)
+* | a38c0fb Add rewording again for limitation about the maximum duration cutoff (branch splits)
+|/  
+* 623826e Added analysis code and report file updated to reflect a new minimum duration cutoff for trips (main)
+* f0a6ee5 Revert "Added exaggerated claim (on purpose for Part 4)" (main)
+* 2a71a5a Added exaggerated claim (on purpose for Part 4)(main)
+* e3bf2ab Added updated and correct WORKLOG.md file (main)
+* 9686273 Removed extra WORKLOG.md file (main)
+* c1caefd Add rewording of a limitation in report.md file (main)
+* 0ae202d Add gitignore file that excludes the raw data files from the analysis, Jupyter's autosave files, and scratch/throwaway experiments (main)
+* 05315aa Add worklog of current backing up process (main)
+* 4590767 Add analysis and charts to support answers to ridership questions (main)
+* 37a3231 Add manager's report answering ridership questions (main)
 
 
+\## Reflection + AI Disclosure
 
-\*\*Q:\*\*
+R1. Which "oops" drill (Part 4) or the conflict (Part 6) changed how scary Git feels, and in which direction? (2–3 sentences.)
+* The conflict changed how scary Git feels in the positive direction. The exercise made me a lot more confident with using Git regarding making sure that all of my changes are updated properly and knowing that I don't have to worry about autosave not working.
 
 
-
+R2. AI disclosure: describe any use of generative AI tools in this assignment, or state "No generative AI tools were used." Example: "I used a generative AI tool to explain what fast-forward means. All final commands, commits, and conclusions are my own."
+* I used Google to figure out how to change my user.name and user.email. My old one from undergrad was still attached for some reason. All final commands, commits, and conclusions are my own.
