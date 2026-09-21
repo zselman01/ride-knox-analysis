@@ -51,7 +51,7 @@
 
 
 
-#### Part 1:
+#### Part A:
 
 ###### **Output**
 
@@ -63,5 +63,52 @@
 
 
 
-Q1:
+Q:
+
+
+
+
+
+
+
+#### Part B:
+
+###### **Layout for two years**
+
+* I have chosen to include each year in its own folder within the repository.
+* Also, I note here that the 2026 report and files are already in the repository from the outset of this project. For this part, I will brought in the 2025 bundle from the Module 4 Assignment.
+
+###### **Output**
+
+*After*
+
+
+
+
+
+
+
+Q:
+
+
+
+
+
+
+
+#### Part c:
+
+###### **Output**
+
+*After*
+
+
+
+
+
+
+
+Q:
+
+
 
