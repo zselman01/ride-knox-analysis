@@ -80,7 +80,13 @@ Q:
 
 ###### **Output**
 
-*After*
+*Output for keeping out what must stay out (git status --ignored):*
+
+&#x09;2025\_bundle/analysis.ipynb
+
+&#x09;2025\_bundle/charts/
+
+&#x09;2025\_bundle/report.md
 
 
 
@@ -88,7 +94,11 @@ Q:
 
 
 
-Q:
+Q-B1: **The ride\_knox\_api\_token file in the 2026 hand-off must never be committed. We can make sure that this file doesn't get committed by running git status --ignored in Git terminal. The information in this file is like a password and detrimental to the company so would result in a data breach if it reached a public repo.** 
+
+
+
+Q-B2: **The repository reorganization changed the path that the data files and scratch folder depended on (the .gitignore file). I thought of this before making the folders for 2025 and 2026, but if I didn't the files would not have been ignored and would show up as needing to be staged and committed. Before staging or committing anything, I created a .gitignore file for both folders.** 
 
 
 
