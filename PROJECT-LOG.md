@@ -150,7 +150,7 @@ branch '2-add-shared-README' set up to track 'origin/2-add-shared-README'.
 
 
 
-* ***git push -u origin 2-add-shared-README***
+* ***git push -u origin 2-add-shared-README \[me]***
 
 Enumerating objects: 6, done.
 
@@ -281,6 +281,7 @@ Automatic merge failed; fix conflicts and then commit the result.
 
 
 
+
 ### Limitations
 
 \- Our data for a few variables is only over a short period of time. There are stations that have been excluded because they were missing both end station IDs and end times. We should collect information from our rider that could be influencing their riding (e.g., reasons for riding, etc.). The one minute cutoff rule implemented in the analysis causes us to lose data points that may otherwise influence our analysis. We excluded trips longer than 24 hours (bikes likely never docked properly).
@@ -319,3 +320,4 @@ Automatic merge failed; fix conflicts and then commit the result.
 
 
 Q:
+
