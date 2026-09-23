@@ -1,4 +1,4 @@
-# *The Day Pass Brought the Casual Riders Back*
+# *2026 Update: The Day Pass Brought the Casual Riders Back; Kept Member Riders unaffected*
 
 
 
@@ -30,7 +30,7 @@ Comparing June 2025 to June 2026, \~44% (31,260 total trips) to \~44% (34,771 to
 
 
 
-### 2025 Chapter 
+### 2025 Chapter
 
 Both Members and Casual rider types seem to have a natural progression, then decline throughout the year. However, ridership does seem to be down for casual riders starting in July. Of the 10 stations with the most pressure (according to trips per dock), there are four stations in the UT Campus neighborhood and three stations in the Downtown neighborhood where we should consider adding stations.
 
@@ -42,7 +42,7 @@ For the ridership question, in comparison to the increase in member riders, the 
 
 
 
-### Data 
+### Data
 
 This repository includes the analysis, figures from the analyses, and reports across data from 2025 and 2026 to answer questions related to ridership changes at Ride Knox. Additionally, a project log noting key changes that have occurred over the lifetime of this repository, as well as a \_config.yml for GitHub Pages design purposes. Lastly, the raw files will not be found in this repository to ensure the data is not publicly available for manipulation purposes.
 
@@ -53,6 +53,4 @@ This repository includes the analysis, figures from the analyses, and reports ac
 ### How-To-Run
 
 ???
-
-
 
