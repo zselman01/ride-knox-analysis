@@ -232,11 +232,11 @@ branch '2-add-shared-README' set up to track 'origin/2-add-shared-README'.
 
 * ***git push -u origin 2-add-shared-README \[Riley]***
 
-To C:\\Users\\selma\\ride-knox-analysis
+To https://github.com/zselman01/ride-knox-analysis.git
 
 &#x20;! \[rejected]        2-add-shared-README -> 2-add-shared-README (fetch first)
 
-error: failed to push some refs to 'C:\\Users\\selma\\ride-knox-analysis'
+error: failed to push some refs to 'https://github.com/zselman01/ride-knox-analysis.git'
 
 hint: Updates were rejected because the remote contains work that you do not
 
