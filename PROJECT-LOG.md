@@ -198,7 +198,7 @@ done.
 
 
 
-* ***git commit -m "Added my updates to headline" \[me]***          
+* ***git commit -m "Added my updates to headline" \[me]***
 
 \[2-add-shared-README f085a5f] Added my updates to headline
 
@@ -221,6 +221,12 @@ Writing objects: 100% (3/3), 357 bytes | 357.00 KiB/s, done.
 Total 3 (delta 2), reused 0 (delta 0), pack-reused 0 (from 0)
 
 remote: Resolving deltas: 100% (2/2), completed with 2 local objects.
+
+To https://github.com/zselman01/ride-knox-analysis.git
+
+&#x20;  4581d9f..f085a5f  2-add-shared-README -> 2-add-shared-README
+
+branch '2-add-shared-README' set up to track 'origin/2-add-shared-README'.
 
 To https://github.com/zselman01/ride-knox-analysis.git
 
@@ -270,7 +276,6 @@ Automatic merge failed; fix conflicts and then commit the result.
 
 
 
-<<<<<<< HEAD
 
 
 
@@ -284,9 +289,7 @@ Automatic merge failed; fix conflicts and then commit the result.
 
 
 
-=======
 
->>>>>>> f085a5f632b4619272dcc3b6e652f9f05fa7ddc0
 
 
 
@@ -316,4 +319,3 @@ Automatic merge failed; fix conflicts and then commit the result.
 
 
 Q:
-
