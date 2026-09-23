@@ -110,11 +110,13 @@ Q-B2: **The repository reorganization changed the path that the data files and s
 
 ###### **Full Transcript of Commands and Outputs**
 
-***git switch -c 2-add-shared-README \[me]***
+* ***git switch -c 2-add-shared-README \[me]***
 
 &#x09;Switched to a new branch '2-add-shared-README'
 
-***git push -u origin 2-add-shared-README \[me]***
+
+
+* ***git push -u origin 2-add-shared-README \[me]***
 
 &#x09;Total 0 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
 
@@ -129,6 +131,44 @@ remote:
 To https://github.com/zselman01/ride-knox-analysis.git
 
 &#x20;\* \[new branch]      2-add-shared-README -> 2-add-shared-README
+
+branch '2-add-shared-README' set up to track 'origin/2-add-shared-README'.
+
+
+
+* ***git add PROJECT-LOG.md README.md \[me]***
+
+
+
+* ***git commit -m "Rewrite README.md as the two-year story" \[me]***
+
+\[2-add-shared-README 9143a28] Rewrite README.md as the two-year story
+
+&#x20;2 files changed, 81 insertions(+), 5 deletions(-)
+
+&#x20;create mode 100644 README.md
+
+
+
+* ***git push -u origin 2-add-shared-README***
+
+Enumerating objects: 6, done.
+
+Counting objects: 100% (6/6), done.
+
+Delta compression using up to 8 threads
+
+Compressing objects: 100% (4/4), done.
+
+Writing objects: 100% (4/4), 2.30 KiB | 2.30 MiB/s, done.
+
+Total 4 (delta 1), reused 0 (delta 0), pack-reused 0 (from 0)
+
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+
+To https://github.com/zselman01/ride-knox-analysis.git
+
+&#x20;  f6083c9..9143a28  2-add-shared-README -> 2-add-shared-README
 
 branch '2-add-shared-README' set up to track 'origin/2-add-shared-README'.
 
