@@ -228,6 +228,12 @@ To https://github.com/zselman01/ride-knox-analysis.git
 
 branch '2-add-shared-README' set up to track 'origin/2-add-shared-README'.
 
+To https://github.com/zselman01/ride-knox-analysis.git
+
+&#x20;  4581d9f..f085a5f  2-add-shared-README -> 2-add-shared-README
+
+branch '2-add-shared-README' set up to track 'origin/2-add-shared-README'.
+
 
 
 * ***git push -u origin 2-add-shared-README \[Riley]***
@@ -270,7 +276,6 @@ Automatic merge failed; fix conflicts and then commit the result.
 
 
 
-<<<<<<< HEAD
 
 
 
@@ -284,9 +289,7 @@ Automatic merge failed; fix conflicts and then commit the result.
 
 
 
-=======
 
->>>>>>> f085a5f632b4619272dcc3b6e652f9f05fa7ddc0
 
 
 
@@ -309,27 +312,10 @@ Automatic merge failed; fix conflicts and then commit the result.
 
 * ***git push -u origin 2-add-shared-README \[Riley]***
 
-Enumerating objects: 14, done.
 
-Counting objects: 100% (13/13), done.
 
-Delta compression using up to 8 threads
-
-Compressing objects: 100% (8/8), done.
-
-Writing objects: 100% (8/8), 1.28 KiB | 1.28 MiB/s, done.
-
-Total 8 (delta 5), reused 0 (delta 0), pack-reused 0 (from 0)
-
-remote: Resolving deltas: 100% (5/5), completed with 2 local objects.
-
-To https://github.com/zselman01/ride-knox-analysis.git
-
-&#x20;  c7a62d9..33694bf  2-add-shared-README -> 2-add-shared-README
-
-branch '2-add-shared-README' set up to track 'origin/2-add-shared-README'.
+* 
 
 
 
 Q:
-
