@@ -94,11 +94,11 @@ Q:
 
 
 
-Q-B1: **The ride\_knox\_api\_token file in the 2026 hand-off must never be committed. We can make sure that this file doesn't get committed by running git status --ignored in Git terminal. The information in this file is like a password and detrimental to the company so would result in a data breach if it reached a public repo.** 
+Q-B1: **The ride\_knox\_api\_token file in the 2026 hand-off must never be committed. We can make sure that this file doesn't get committed by running git status --ignored in Git terminal. The information in this file is like a password and detrimental to the company so would result in a data breach if it reached a public repo.**
 
 
 
-Q-B2: **The repository reorganization changed the path that the data files and scratch folder depended on (the .gitignore file). I thought of this before making the folders for 2025 and 2026, but if I didn't the files would not have been ignored and would show up as needing to be staged and committed. Before staging or committing anything, I created a .gitignore file for both folders.** 
+Q-B2: **The repository reorganization changed the path that the data files and scratch folder depended on (the .gitignore file). I thought of this before making the folders for 2025 and 2026, but if I didn't the files would not have been ignored and would show up as needing to be staged and committed. Before staging or committing anything, I created a .gitignore file for both folders.**
 
 
 
@@ -108,9 +108,29 @@ Q-B2: **The repository reorganization changed the path that the data files and s
 
 #### Part c:
 
-###### **Output**
+###### **Full Transcript of Commands and Outputs**
 
-*After*
+***git switch -c 2-add-shared-README \[me]***
+
+&#x09;Switched to a new branch '2-add-shared-README'
+
+***git push -u origin 2-add-shared-README \[me]***
+
+&#x09;Total 0 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+
+remote: 
+
+remote: Create a pull request for '2-add-shared-README' on GitHub by visiting:
+
+remote:      https://github.com/zselman01/ride-knox-analysis/pull/new/2-add-shared-README
+
+remote: 
+
+To https://github.com/zselman01/ride-knox-analysis.git
+
+&#x20;\* \[new branch]      2-add-shared-README -> 2-add-shared-README
+
+branch '2-add-shared-README' set up to track 'origin/2-add-shared-README'.
 
 
 
@@ -119,6 +139,4 @@ Q-B2: **The repository reorganization changed the path that the data files and s
 
 
 Q:
-
-
 
