@@ -120,13 +120,13 @@ Q-B2: **The repository reorganization changed the path that the data files and s
 
 &#x09;Total 0 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
 
-remote: 
+remote:
 
 remote: Create a pull request for '2-add-shared-README' on GitHub by visiting:
 
 remote:      https://github.com/zselman01/ride-knox-analysis/pull/new/2-add-shared-README
 
-remote: 
+remote:
 
 To https://github.com/zselman01/ride-knox-analysis.git
 
@@ -174,7 +174,144 @@ branch '2-add-shared-README' set up to track 'origin/2-add-shared-README'.
 
 
 
+* ***git clone C:\\Users\\selma\\ride-knox-analysis C:\\Users\\selma\\ride-knox-riley \[me]***
 
+Cloning into 'C:\\Users\\selma\\ride-knox-riley'...
+
+done.
+
+
+
+* ***git add README.md \[Riley]***
+
+
+
+* ***git commit -m "Added Riley's updates to README.md including edits to headline and added limitations section" \[Riley]***
+
+\[2-add-shared-README 4e076ab] Added Riley's updates to README.md including edits to headline and added limitations section
+
+1 file changed, 13 insertions(+), 3 deletions(-)
+
+
+
+* ***git add README.md \[me]***
+
+
+
+* ***git commit -m "Added my updates to headline" \[me]***          
+
+\[2-add-shared-README f085a5f] Added my updates to headline
+
+&#x20;1 file changed, 3 insertions(+), 5 deletions(-)
+
+
+
+* ***git push -u origin 2-add-shared-README \[me]***
+
+Enumerating objects: 5, done.
+
+Counting objects: 100% (5/5), done.
+
+Delta compression using up to 8 threads
+
+Compressing objects: 100% (3/3), done.
+
+Writing objects: 100% (3/3), 357 bytes | 357.00 KiB/s, done.
+
+Total 3 (delta 2), reused 0 (delta 0), pack-reused 0 (from 0)
+
+remote: Resolving deltas: 100% (2/2), completed with 2 local objects.
+
+To https://github.com/zselman01/ride-knox-analysis.git
+
+&#x20;  4581d9f..f085a5f  2-add-shared-README -> 2-add-shared-README
+
+branch '2-add-shared-README' set up to track 'origin/2-add-shared-README'.
+
+
+
+* ***git push -u origin 2-add-shared-README \[Riley]***
+
+To C:\\Users\\selma\\ride-knox-analysis
+
+&#x20;! \[rejected]        2-add-shared-README -> 2-add-shared-README (fetch first)
+
+error: failed to push some refs to 'C:\\Users\\selma\\ride-knox-analysis'
+
+hint: Updates were rejected because the remote contains work that you do not
+
+hint: have locally. This is usually caused by another repository pushing to
+
+hint: the same ref. If you want to integrate the remote changes, use
+
+hint: 'git pull' before pushing again.
+
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+
+
+
+* ***git pull \[Riley]***
+
+Auto-merging README.md
+
+CONFLICT (content): Merge conflict in README.md
+
+Automatic merge failed; fix conflicts and then commit the result.
+
+
+
+**CONFLICT MARKERS**
+
+* <<<<<<< HEAD
+* \# \*The Day Pass Brought the Casual Riders Back and Campus Pressure was Relieved.\*
+* =======
+* \# \*2026 Update: The Day Pass Brought the Casual Riders Back; Kept Member Riders unaffected\*
+* >>>>>>> f085a5f632b4619272dcc3b6e652f9f05fa7ddc0
+
+
+
+<<<<<<< HEAD
+
+
+
+
+
+### Limitations
+
+\- Our data for a few variables is only over a short period of time. There are stations that have been excluded because they were missing both end station IDs and end times. We should collect information from our rider that could be influencing their riding (e.g., reasons for riding, etc.). The one minute cutoff rule implemented in the analysis causes us to lose data points that may otherwise influence our analysis. We excluded trips longer than 24 hours (bikes likely never docked properly).
+
+
+
+
+
+=======
+
+>>>>>>> f085a5f632b4619272dcc3b6e652f9f05fa7ddc0
+
+
+
+**RESOLUTIONS**
+
+* Updated Headliner sentence --> 2026 Update: The Day Pass Brought the Casual Riders Back, Campus Pressure was Relieved, and Member Riders Were Unaffected.
+* Kept full Limitations section (see above).
+
+
+
+* ***git add README.md \[Riley]***
+
+
+
+* ***git commit -m "Resolved bug with me and Riley's edits to the two-year README.md" \[Riley]***
+
+\[2-add-shared-README 3a04546] Resolved bug with me and Riley's edits to the two-year README.md
+
+
+
+* ***git push -u origin 2-add-shared-README \[Riley]***
+
+
+
+* 
 
 
 
