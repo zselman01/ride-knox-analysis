@@ -1,4 +1,4 @@
-# *2026 Update: The Day Pass Brought the Casual Riders Back; Kept Member Riders unaffected*
+# *2026 Update: The Day Pass Brought the Casual Riders Back, Campus Pressure was Relieved, and Member Riders Were Unaffected.*
 
 
 
@@ -53,4 +53,12 @@ This repository includes the analysis, figures from the analyses, and reports ac
 ### How-To-Run
 
 ???
+
+
+
+
+
+### Limitations
+
+Our data for a few variables is only over a short period of time. There are stations that have been excluded because they were missing both end station IDs and end times. We should collect information from our rider that could be influencing their riding (e.g., reasons for riding, etc.). The one minute cutoff rule implemented in the analysis causes us to lose data points that may otherwise influence our analysis. We excluded trips longer than 24 hours (bikes likely never docked properly).
 
