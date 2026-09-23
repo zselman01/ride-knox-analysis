@@ -4,7 +4,7 @@
 
 **NetID:** zselman
 
-**Log Commit Policy:** Committed directly to main/master branch
+**Log Commit Policy:** Committed on whatever branch is open
 
 
 
