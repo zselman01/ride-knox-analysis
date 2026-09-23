@@ -51,11 +51,9 @@
 
 
 
-#### Part A:
+#### Part A: The release plan, written as issues
 
-###### **Output**
-
-*After*
+###### **Issues can be found in GitHub (**https://github.com/zselman01/ride-knox-analysis.git**)**
 
 
 
@@ -63,7 +61,7 @@
 
 
 
-Q:
+Q-A1:
 
 
 
@@ -71,7 +69,7 @@ Q:
 
 
 
-#### Part B:
+#### Part B: Integrate 2026 (through pull requests)
 
 ###### **Layout for two years**
 
@@ -92,8 +90,6 @@ Q:
 
 
 
-
-
 Q-B1: **The ride\_knox\_api\_token file in the 2026 hand-off must never be committed. We can make sure that this file doesn't get committed by running git status --ignored in Git terminal. The information in this file is like a password and detrimental to the company so would result in a data breach if it reached a public repo.**
 
 
@@ -106,7 +102,7 @@ Q-B2: **The repository reorganization changed the path that the data files and s
 
 
 
-#### Part c:
+#### Part C: Co-author the front page with Riley (two clones, one branch)
 
 ###### **Full Transcript of Commands and Outputs**
 
@@ -198,7 +194,7 @@ done.
 
 
 
-* ***git commit -m "Added my updates to headline" \[me]***          
+* ***git commit -m "Added my updates to headline" \[me]***
 
 \[2-add-shared-README f085a5f] Added my updates to headline
 
@@ -311,9 +307,33 @@ Automatic merge failed; fix conflicts and then commit the result.
 
 
 
-* 
+
+
+Q-C1: **In Assignment 5, Part 8, my push from the clone succeeded on the first try. Riley's didn't. The difference between the state of the remote in Assignment 5 vs this project is that we were pushing from the same branch which caused the push conflict.**
 
 
 
-Q:
+Q-C2: **I obeyed "main is sacred" perfectly, and still hit a conflict. However, the conflict lives on a separate branch in the workflow and main/master is not touched. If the experiment on a separate branch succeeds, we merge it back; if it fails, we delete it. Keeping experiments separate from main and checking them often are workflow habits from class that keep the conflicts small.** 
+
+
+
+Q-C3: **In Riley's conflict, HEAD marks Riley's changes (branch we're on) that need to be merged with my changes (incoming changes on same branch). Git automatically marks these conflicts starting with HEAD, so neither author has to try to find where the conflict is.**
+
+
+
+
+
+
+
+#### Part D: Publish the two-year story
+
+###### **Subsection goes here**
+
+
+
+
+
+
+
+Q-D1:
 
