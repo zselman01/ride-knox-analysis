@@ -6,9 +6,9 @@
 
 The Day Pass brought casual riders back. The dock expansion and new station fix the campus crunch. One out of two idle stations from 2025 seem to still be sitting idle.
 
-(2026_bundle/charts/share_by_rider_type_2026.png)
+!(2026_bundle/charts/share_by_rider_type_2026.png)
 
-(2026_bundle/charts/arrivals_per_dock_2026.png)
+!(2026_bundle/charts/arrivals_per_dock_2026.png)
 
 To view the full 2026 memo, please visit [2026 Memo](2026_bundle/memo.md)
 
