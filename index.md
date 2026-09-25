@@ -4,7 +4,7 @@
 
 ### 2026 Chapter
 
-2026_bundle/charts/median_duration_per_rider_type_2026.png
+[2026 Chart](2026_bundle/charts/median_duration_per_rider_type_2026.png)
 
 The Day Pass brought casual riders back. The dock expansion and new station fix the campus crunch. One out of two idle stations from 2025 seem to still be sitting idle.
 
