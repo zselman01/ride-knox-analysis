@@ -57,11 +57,7 @@
 
 
 
-
-
-
-
-Q-A1:
+Q-A1: One issue that has to be resolved in moving the 2026 files into the repository before committing the changes is to ensure that the files that should never be made public (API token file, raw data, etc.) do not get committed. This requires us to add these files to the .gitignore file before anything is staged or committed in order to avoid the hazard of having information leaked/released that should not be given out.
 
 
 
