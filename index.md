@@ -28,4 +28,4 @@ Will go here (still working)
 
 
 ### Repository README
-For the technically curious, our [README.md](README.md) describing how to run the code used for these analyses can be viewed here.
+For the technically curious, our [README.md](https://github.com/zselman01/ride-knox-analysis/blob/master/README.md) describing how to run the code used for these analyses can be viewed here.
