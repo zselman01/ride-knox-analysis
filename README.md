@@ -74,13 +74,3 @@ For both 2025 and 2026 notebooks:
 
 ### Limitations
 Our data for a few variables is only over a short period of time. There are stations that have been excluded because they were missing both end station IDs and end times. We should collect information from our rider that could be influencing their riding (e.g., reasons for riding, etc.). The one minute cutoff rule implemented in the analysis causes us to lose data points that may otherwise influence our analysis. We excluded trips longer than 24 hours (bikes likely never docked properly).
-
-
-
-### Release Note
-Will go here (still working)
-
-
-
-### Repository README
-For the technically curious, our [README.md](README.md) describing how to run the code used for these analyses can be viewed here.
