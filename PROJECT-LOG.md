@@ -21,7 +21,7 @@
 
 \----------
 
-# *After git log --oneline **(NOT COMPLETE!)***
+# *After git log --oneline*
 
 * 0b766e4 (HEAD -> master, origin/master, origin/HEAD) Added PROJECT-LOG.md for Module 2 Project
 * 591a6c5 Added 2026 data files to .gitignore for Module 2 Project
@@ -45,7 +45,7 @@
 * 4590767 Add analysis and charts to support answers to ridership questions
 * 37a3231 Add manager's report answering ridership questions
 
-
+* *Side note*: Module 6 assignment is not here becayse I had to make a new repository for that assignment. I will include everything learned from that assignment in this project though. 
 
 
 
@@ -54,14 +54,10 @@
 #### Part A: The release plan, written as issues
 
 ###### **Issues can be found in GitHub (**https://github.com/zselman01/ride-knox-analysis.git**)**
+I did not know how to use Issues in GitHub when starting this project because we had not discussed them in class. All six of my issues are present (and can be seen in the history, but they are not in the expected order based on the #numbers).
 
 
-
-
-
-
-
-Q-A1:
+Q-A1: One issue that has to be resolved in moving the 2026 files into the repository before committing the changes is to ensure that the files that should never be made public (API token file, raw data, etc.) do not get committed. This requires us to add these files to the .gitignore file before anything is staged or committed in order to avoid the hazard of having information leaked/released that should not be given out.
 
 
 
@@ -146,7 +142,7 @@ branch '2-add-shared-README' set up to track 'origin/2-add-shared-README'.
 
 
 
-* ***git push -u origin 2-add-shared-README***
+* ***git push -u origin 2-add-shared-README \[me]***
 
 Enumerating objects: 6, done.
 
@@ -224,15 +220,21 @@ To https://github.com/zselman01/ride-knox-analysis.git
 
 branch '2-add-shared-README' set up to track 'origin/2-add-shared-README'.
 
+To https://github.com/zselman01/ride-knox-analysis.git
+
+&#x20;  4581d9f..f085a5f  2-add-shared-README -> 2-add-shared-README
+
+branch '2-add-shared-README' set up to track 'origin/2-add-shared-README'.
+
 
 
 * ***git push -u origin 2-add-shared-README \[Riley]***
 
-To C:\\Users\\selma\\ride-knox-analysis
+To https://github.com/zselman01/ride-knox-analysis.git
 
 &#x20;! \[rejected]        2-add-shared-README -> 2-add-shared-README (fetch first)
 
-error: failed to push some refs to 'C:\\Users\\selma\\ride-knox-analysis'
+error: failed to push some refs to 'https://github.com/zselman01/ride-knox-analysis.git'
 
 hint: Updates were rejected because the remote contains work that you do not
 
@@ -266,7 +268,7 @@ Automatic merge failed; fix conflicts and then commit the result.
 
 
 
-<<<<<<< HEAD
+
 
 
 
@@ -280,9 +282,7 @@ Automatic merge failed; fix conflicts and then commit the result.
 
 
 
-=======
 
->>>>>>> f085a5f632b4619272dcc3b6e652f9f05fa7ddc0
 
 
 
@@ -327,13 +327,6 @@ Q-C3: **In Riley's conflict, HEAD marks Riley's changes (branch we're on) that n
 
 #### Part D: Publish the two-year story
 
-###### **Subsection goes here**
 
-
-
-
-
-
-
-Q-D1:
+Q-D1: Before this part, a visitor to my Pages URL would see all previous work from the README.md as the home page. However, adding the index.md file overrode that.
 
