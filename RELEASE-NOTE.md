@@ -1,4 +1,3 @@
-addressed to the Director of Operations (cc: Marketing Lead), announcing the updated public page: what it now shows, what changed since the version the board saw, one honest caveat, and where to click first. No technical jargon; the words repo, commit, branch, merge, pull request may not appear. Linked from your home page.
 ## TO: Director of Operations
 ### cc: Marketing Lead
 
