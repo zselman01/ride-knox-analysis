@@ -21,7 +21,7 @@
 
 \----------
 
-# *After git log --oneline **(NOT COMPLETE!)***
+# *After git log --oneline*
 
 * 0b766e4 (HEAD -> master, origin/master, origin/HEAD) Added PROJECT-LOG.md for Module 2 Project
 * 591a6c5 Added 2026 data files to .gitignore for Module 2 Project
@@ -45,7 +45,7 @@
 * 4590767 Add analysis and charts to support answers to ridership questions
 * 37a3231 Add manager's report answering ridership questions
 
-
+* *Side note*: Module 6 assignment is not here becayse I had to make a new repository for that assignment. I will include everything learned from that assignment in this project though. 
 
 
 
