@@ -337,3 +337,94 @@ Q-D1: Before this part, a visitor to my Pages URL would see all previous work fr
 
 ##### Auditable
 This project's page offers superior, built-in auditability compared to standard websites. Every update to the production environment is fully traceable, capturing the precise timeline, affected files, granular team feedback, and strategic intent behind every change.
+
+
+
+
+#### Part F: Final state
+100d123 (HEAD -> master, origin/master, origin/HEAD) Merge pull request #29 from zselman01/4-release-note
+7e79dfd (origin/4-release-note, 4-release-note) Updated PROJECT-LOG.md with release note and auditability answer
+8443e0a Merge pull request #28 from zselman01/4-release-note
+e4aa0c1 Add RELEASE-NOTE.md
+ccd4aaf Merge pull request #27 from zselman01/3-add-three-links
+915304a (origin/3-add-three-links, 3-add-three-links) Update index.md to update Pages homepage
+e6c139d Merge pull request #26 from zselman01/3-add-three-links
+28ea2c7 Merge pull request #25 from zselman01/master
+fed338e Merge pull request #24 from zselman01/2-add-shared-readme
+b137f69 Merge branch 'master' into 2-add-shared-readme
+2d3f247 (2-add-shared-readme) Update README.md Closes add-shared-README
+4dd8ebb Merge pull request #23 from zselman01/1-restructure-for-2025
+b466495 (origin/1-restructure-for-2025, 1-restructure-for-2025) Update Overall and How to Run section in README.md and added requirements.txt
+d538d36 Merge pull request #22 from zselman01/0-add-issues-online
+7f99c4b (origin/0-add-issues-online, 0-add-issues-online) Update PROJECT-LOG.md. Closes 0-add-issues-online
+c12b54f Merge pull request #21 from zselman01/3-add-three-links
+43ca7cb Working on images
+2167af8 Merge pull request #20 from zselman01/3-add-three-links
+2957bc7 Working on images
+7e80b2e Merge pull request #19 from zselman01/3-add-three-links
+76f2b73 Working on getting image to load; added another chart image
+ed6e4ca Merge pull request #18 from zselman01/3-add-three-links
+ca95a97 Working on getting image to load
+2ba649a Merge pull request #17 from zselman01/3-add-three-links
+b1ea1ef Added index.md with the two-year story, updated Homepage theme and PROJECT-LOG.md
+4fc28c3 Merge pull request #10 from zselman01/0-add-issues-online
+e059ff8 Update Part A in PROJECT-LOG.md and Closes #0 and #1
+6f3be33 Merge pull request #9 from zselman01/2-add-shared-README
+45f37e5 (origin/2-add-shared-README) Updated PROJECT-LOG.md
+bc6cfcf Merge pull request #8 from zselman01/1-restructure-for-2025
+4c77f3b Updated PROJECT-LOG.md
+12d7b37 Merge branch '1-restructure-for-2025' of https://github.com/zselman01/ride-knox-analysis into 1-restructure-for-2025
+26eca73 Update PROJECT-LOG.md
+6c5aab2 Merge pull request #7 from zselman01/1-restructure-for-2025
+5bd0e1e Merge branch 'master' into 1-restructure-for-2025
+52a71e8 Updated PROJECT-LOG.md and ensured secure files are actually secure and pushed to GitHub
+c6614d7 Merge pull request #6 from zselman01/2-add-shared-README
+33694bf Merge branch '2-add-shared-README' of C:\Users\selma\ride-knox-analysis into 2-add-shared-README
+11ab363 Merge pull request #5 from zselman01/2-add-shared-README
+c7a62d9 Update PROJECT-LOG.md
+3a04546 Resolved bug with me and Riley's edits to the two-year README.md
+f085a5f Added my updates to headline
+4e076ab Added Riley's updates to README.md including edits to headline and added limitations section
+4581d9f Update PROJECT-LOG.md
+80ce99e Update PROJECT-LOG.md
+9143a28 Rewrite README.md as the two-year story
+bfac55d Merge pull request #4 from zselman01/1-restructure-for-2025
+f6083c9 Added all files that need to be hidden to.gitignore
+2b20d30 Ensure 2025 data files are ignored and Updated PROJECT-LOG.md
+4f5b79a Merge pull request #3 from zselman01/1-restructure-for-2025
+dbf9c33 Added built-in theme for GitHub Pages
+6405b4d Merge pull request #2 from zselman01/1-restructure-for-2025
+7c893c4 Update repository organization per PR comment
+aa4ee9d Merge pull request #1 from zselman01/1-restructure-for-2025
+9b0a78a Add 2025 bundle (analysis.ipynb, charts, and report.md) to repository
+08eeb84 Update: These files were not deleted. They were added to a folder
+ffd1e5f Reorganized repository so two years (2025 and 2026) can coexist in repository and Updated PROJECT-LOG.md with these details
+5f095dd Updated PROJECT-LOG.md with clean tree check
+0b766e4 Added PROJECT-LOG.md for Module 2 Project
+591a6c5 Added 2026 data files to .gitignore for Module 2 Project
+017c4da Updated WORKLOG.md
+692d227 Added the period back in throw-away branch to diverge from master branch
+dd2eee2 Made a change in the throw-away branch (removed a period in a sentence) to complete Part 9: Challenge
+50441a2 Commit from cloned branch merged with master branch
+7cf5029 Updated WORKLOG.md
+f1f8ae4 Add recovery test performed
+a5c3a76 Conflict resolved and wording of limitations from master branch was chosen
+a38c0fb Add rewording again for limitation about the maximum duration cutoff
+738a546 Add rewording for limitation about the maximum duration cutoff
+623826e Added analysis code and report file updated to reflect a new minimum duration cutoff for trips
+f0a6ee5 Revert "Added exaggerated claim (on purpose for Part 4)"
+2a71a5a Added exaggerated claim (on purpose for Part 4)
+e3bf2ab Added updated and correct WORKLOG.md file
+9686273 Removed extra WORKLOG.md file
+c1caefd Add rewording of a limitation in report.md file
+0ae202d Add gitignore file that excludes the raw data files from the analysis, Jupyter's autosave files, and scratch/throwaway experiments
+05315aa Add worklog of current backing up process
+4590767 Add analysis and charts to support answers to ridership questions
+37a3231 Add manager's report answering ridership questions
+
+
+
+
+#### Reflection + AI disclosure
+1. Having Riley's changes on a different branch and pulling more often would have made the conflicts rarer or smaller on a real team. This implies that professionals probably push and pull their work very often when they're working with others. 
+2. AI disclosure: describe any use of generative AI tools, or state "No generative AI tools were used." AI-generated output must not be submitted verbatim; all submitted work must reflect your own understanding and judgment. Example: "I used Google to explain why I couldn't sync my laptop when dealing with the conflict with Riley. I realized that I was pushing to my other folder (my laptop) instead of to GitHub like I was trying to do. I also used Google to figure out why my links/images wasn't popping up. I was not naming files properly which caused the issue. Lastly, I used Google to learn what stakeholder language means for the audit question. All commits, PRs, resolutions, and conclusions are my own.
