@@ -323,6 +323,17 @@ Q-D1: Before this part, a visitor to my Pages URL would see all previous work fr
 
 
 #### Part E: The release note and audit question
-The Director asks: "If someone claims this page said something different last month, how would we know what changed and when?" Answer in the log with (1) a change history: the five commits or merged PRs from git log --oneline that best tell this release's story, each with its date and a one-line plain-English gloss, and (2) 2–3 sentences, in stakeholder language, on why this project's page is auditable in a way a normal website is not.
 
+##### Change history (5 commits)
+*ffd1e5f* 9/21/2026 Reorganized repository so two years (2025 and 2026) can coexist in repository and Updated PROJECT-LOG.md with these details
 
+*9143a28* 9/22/2026 Rewrite README.md as the two-year story
+
+*4e076ab* 9/23/2026 Added Riley's updates to README.md including edits to headline and added limitations section
+
+*3a04546* 9/23/2026 Resolved bug with me and Riley's edits to the two-year README.md
+
+*e4aa0c1* 9/26/2026 Add RELEASE-NOTE.md for Director of Operations
+
+##### Auditable
+This project's page offers superior, built-in auditability compared to standard websites. Every update to the production environment is fully traceable, capturing the precise timeline, affected files, granular team feedback, and strategic intent behind every change.
