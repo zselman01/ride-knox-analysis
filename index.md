@@ -23,7 +23,7 @@ To read the full report from 2025, please view [2025 Report](2025_bundle/report.
 
 
 ### Release Note
-Will go here (still working)
+Click to view the [Release Note](RELEASE-NOTE.md) to the Director of Operations 
 
 
 

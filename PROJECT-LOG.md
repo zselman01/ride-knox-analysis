@@ -280,12 +280,6 @@ Automatic merge failed; fix conflicts and then commit the result.
 
 
 
-
-
-
-
-
-
 **RESOLUTIONS**
 
 * Updated Headliner sentence --> 2026 Update: The Day Pass Brought the Casual Riders Back, Campus Pressure was Relieved, and Member Riders Were Unaffected.
@@ -306,9 +300,6 @@ Automatic merge failed; fix conflicts and then commit the result.
 * ***git push -u origin 2-add-shared-README \[Riley]***
 
 
-
-
-
 Q-C1: **In Assignment 5, Part 8, my push from the clone succeeded on the first try. Riley's didn't. The difference between the state of the remote in Assignment 5 vs this project is that we were pushing from the same branch which caused the push conflict.**
 
 
@@ -323,10 +314,15 @@ Q-C3: **In Riley's conflict, HEAD marks Riley's changes (branch we're on) that n
 
 
 
-
-
 #### Part D: Publish the two-year story
 
-
 Q-D1: Before this part, a visitor to my Pages URL would see all previous work from the README.md as the home page. However, adding the index.md file overrode that.
+
+
+
+
+
+#### Part E: The release note and audit question
+The Director asks: "If someone claims this page said something different last month, how would we know what changed and when?" Answer in the log with (1) a change history: the five commits or merged PRs from git log --oneline that best tell this release's story, each with its date and a one-line plain-English gloss, and (2) 2–3 sentences, in stakeholder language, on why this project's page is auditable in a way a normal website is not.
+
 
