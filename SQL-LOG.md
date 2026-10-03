@@ -339,14 +339,36 @@ T0086098	S22	2025-03-30 17:11:08	0.03
 T0189686	S04	2025-03-31 18:35:55	0.03
 T0023480	S01	2025-03-19 17:34:48	0.03
 
+PR URL: https://github.com/zselman01/ride-knox-analysis/pull/33
+
+*Q9e: ROUND >> WHERE >> AND >> ORDER BY >> LIMIT*
+*ORDER BY can sort by duration_hr by name because duration_hr is made before ORDER BY is run in the query*
+
+*Q9f: If we want to get more rows, I would drop the LIMIT condition. We dont lose any of the data from the question but can also see the range from lowest to highest trips on classic bikes on UT Campus in the second half of March.*
+
 
 
 
 ## Part 10
-...
+*10a*
+trip_id	start_time	start_station_id	bike_type
+T0002779	2025-01-01 03:59:22	S02	classic
+T0009131	2025-01-02 03:00:37	S16	classic
+T0174344	2025-01-04 02:55:55	S04	classic
+T0149178	2025-01-05 03:44:59	S02	electric
+T0096295	2025-01-06 03:53:07	S01	classic
+T0165811	2025-01-07 03:06:27	S22	classic
+
+Result: 6 rows returned in 4492ms
+
+*10b: I just had to put trips, stations in the FROM line. I also had to add DISTINCT after SELECT to make sure that the query didn't result in duplicates.*
+
+*Q10c: The SQL feature that would remove a manual step of copying one query to another is Module 8s joins and aggregates.*
 
 
 
 
 ## Reflection and AI Disclosure
-...
+*R1: This pattern teaches me that checking my versions consistently are important to avoid redundancy. Also to avoid having a query that's not easily able to understand later on is important in comparison to a Python traceback.*
+
+*R2: I used Google to explain how to calculate hours versus minutes (* 24 instead of * 1440). I also used Google to learn how to copy headers from the DB Browser All final queries, results, and conclusions are my own.*
