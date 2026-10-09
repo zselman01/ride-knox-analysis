@@ -6,6 +6,7 @@
 
 ## Part 0
 *0a*
+
 trips
 
 CREATE TABLE trips (
@@ -19,6 +20,7 @@ CREATE TABLE trips (
 )
 
 *0b*
+
 0	station_id	TEXT	0		1
 1	station_name	TEXT	1		0
 2	neighborhood	TEXT	0		0
@@ -36,6 +38,7 @@ CREATE TABLE trips (
 
 ## Part 1
 *1a*
+
 station primary key: station_id
 trips primary key: trip_id
 
@@ -44,9 +47,11 @@ Foreign keys:
 - trips.end_station_id → stations.station_id
 
 *1b*
+
 The database is designed this way to prevent overstating or duplicating information unnecessarily. Every fact is stored once, in the table where it belongs, and referenced everywhere else (reduces redundancy). This prevents us from having the problem when we were using Python where we had 121 different station-name spellings when there was only 24 stations.
 
 *1c*
+
 In a normalized database 1 row would have to change (the one for Suttree Landing) in the stations table with one line of code. In the flat CSV you would have to manually fix the latitude and longitude (and possibly neighborhood).
 
 *Q1d: Having a primary key linking trips and stations constrained the database from being 'dirty' and having duplicate rows. This is better than the drop_duplicates() from Module 3 because no one had to notice, decide, or write code (this was done automatically by SQL).*
@@ -56,6 +61,7 @@ In a normalized database 1 row would have to change (the one for Suttree Landing
 
 ## Part 2
 *2a*
+
 S01	Downtown	35.9649	-83.9197
 S02	Downtown	35.9662	-83.9184
 S03	Downtown	35.9636	-83.9186
@@ -65,6 +71,7 @@ S05	World's Fair Park	35.9622	-83.9265
 Result: 24 rows returned in 18ms
 
 *2b*
+
 station_id	station_name	year_installed	age_years
 S01	Market Square	2022	4
 S02	Gay Street & Union Ave	2022	4
@@ -75,6 +82,7 @@ S05	World's Fair Park	2022	4
 Result: 24 rows returned in 991ms
 
 *2c*
+
 trip_id	start_time	duration_hr
 T0057984	2025-01-01 00:06:48	0.21
 T0073896	2025-01-01 00:40:20	0.67
@@ -93,6 +101,7 @@ Result: 250000 rows returned in 2129ms
 
 ## Part 3
 *3a*
+
 neighborhood
 Downtown
 Old City
@@ -108,6 +117,7 @@ Bearden
 Sequoyah Hills
 
 *3b*
+
 Result: 25 rows returned in 53ms
 
 start_station_id
@@ -124,11 +134,13 @@ S99
 
 ## Part 4
 *4a*
+
 station_name
 Cumberland Ave & 17th St
 Fort Sanders - Laurel Ave
 
 *4b*
+
 station_id	station_name	docks
 S01	Market Square	20
 S05	World's Fair Park	20
@@ -136,6 +148,7 @@ S06	Hodges Library	24
 S08	Student Union - UT	24
 
 *4c*
+
 station_name	neighborhood	docks
 Hodges Library	UT Campus	24
 Student Union - UT	UT Campus	24
@@ -143,6 +156,7 @@ Neyland Stadium	UT Campus	16
 Cumberland Ave & 17th St	Fort Sanders	16
 
 *4d*
+
 station_name	neighborhood	docks
 Hodges Library	UT Campus	24
 The Hill - Ayres Hall	UT Campus	12
@@ -151,6 +165,7 @@ Neyland Stadium	UT Campus	16
 Cumberland Ave & 17th St	Fort Sanders	16
 
 *4e*
+
 station_name
 South Waterfront
 Suttree Landing Park
@@ -159,6 +174,7 @@ Zoo Knoxville
 Caswell Park
 
 *4f*
+
 station_id	station_name	docks
 S02	Gay Street & Union Ave	16
 S03	Krutch Park	12
@@ -185,6 +201,7 @@ S23	Bearden - Kingston Pike	12
 
 ## Part 5
 *5a*
+
 Result: 23139 rows returned in 105ms
 
 trip_id	start_time	rider_type
@@ -193,9 +210,11 @@ T0244496	2025-09-01 00:07:57	member
 T0004667	2025-09-01 00:14:49	member
 
 *5b*
+
 Result: 22343 rows returned in 65ms
 
 *5c*
+
 trip_id	start_time
 T0241055	2025-03-15 00:25:55
 T0179889	2025-03-15 00:31:29
@@ -204,6 +223,7 @@ T0134722	2025-03-15 00:51:01
 Result: 10912 rows returned in 62ms
 
 *5d*
+
 Using rider_type = 'member'
 Result: 14164 rows returned in 59ms
 
@@ -217,6 +237,7 @@ Result: 14686 rows returned in 108ms
 
 ## Part 6
 *6a*
+
 station_id	station_name
 S02	Gay Street & Union Ave
 S04	Old City - Jackson Ave
@@ -224,6 +245,7 @@ S11	Cumberland Ave & 17th St
 S12	Fort Sanders - Laurel Ave
 
 *6b*
+
 station_id	station_name	neighborhood
 S20	Zoo Knoxville	East Knoxville
 S21	Caswell Park	East Knoxville
@@ -232,6 +254,7 @@ S23	Bearden - Kingston Pike	Bearden
 S24	Sequoyah Hills Park	Sequoyah Hills
 
 *6c*
+
 station_id	neighborhood
 S14	South Knoxville
 S15	South Knoxville
@@ -244,6 +267,7 @@ S21	East Knoxville
 S22	West Knoxville
 
 *6d*
+
 station_name	neighborhood	docks
 South Waterfront	South Knoxville	12
 Happy Holler	North Knoxville	12
@@ -256,6 +280,7 @@ Broadway & Central	North Knoxville	12
 
 ## Part 7
 *7a*
+
 Result: 3767 rows returned in 219ms
 
 trip_id	start_station_id	start_time
@@ -264,12 +289,15 @@ T0043727	S12	2025-01-01 10:24:35
 T0237204	S03	2025-01-01 16:18:45
 
 *7b*
+
 Result: 223917 rows returned in 170ms
 
 *7c*
+
 Result: 227684 rows returned in 111ms
 
 *7d*
+
 trip_id	start_station_id
 T0084969	S16
 T0197506	S14
@@ -284,6 +312,7 @@ Result: 238 rows returned in 91ms
 
 ## Part 8
 *8a*
+
 station_id	station_name	docks	year_installed
 S04	Old City - Jackson Ave	16	2022
 S11	Cumberland Ave & 17th St	16	2022
@@ -292,12 +321,14 @@ S07	The Hill - Ayres Hall	12	2022
 S09	Neyland Stadium	16	2023
 
 *8b*
+
 station_name	neighborhood	year_installed
 Bearden - Kingston Pike	Bearden	2025
 Sequoyah Hills Park	Sequoyah Hills	2025
 Suttree Landing Park	South Knoxville	2024
 
 *8c*
+
 station_name	neighborhood	year_installed
 Bearden - Kingston Pike	Bearden	2025
 Sequoyah Hills Park	Sequoyah Hills	2025
@@ -310,9 +341,11 @@ Suttree Landing Park	South Knoxville	2024
 
 ## Part 9
 *9b*
+
 We have negative durations which are impossible. The data needs to be cleaned
 
 *9c*
+
 SELECT 
 trip_id,
 start_station_id,
@@ -351,6 +384,7 @@ PR URL: https://github.com/zselman01/ride-knox-analysis/pull/33
 
 ## Part 10
 *10a*
+
 trip_id	start_time	start_station_id	bike_type
 T0002779	2025-01-01 03:59:22	S02	classic
 T0009131	2025-01-02 03:00:37	S16	classic
@@ -361,7 +395,7 @@ T0165811	2025-01-07 03:06:27	S22	classic
 
 Result: 6 rows returned in 4492ms
 
-*10b: I just had to put trips, stations in the FROM line. I also had to add DISTINCT after SELECT to make sure that the query didn't result in duplicates.*
+*Q10b: I just had to put trips, stations in the FROM line. I also had to add DISTINCT after SELECT to make sure that the query didn't result in duplicates.*
 
 *Q10c: The SQL feature that would remove a manual step of copying one query to another is Module 8s joins and aggregates.*
 
@@ -369,6 +403,106 @@ Result: 6 rows returned in 4492ms
 
 
 ## Reflection and AI Disclosure
+
 *R1: This pattern teaches me that checking my versions consistently are important to avoid redundancy. Also to avoid having a query that's not easily able to understand later on is important in comparison to a Python traceback.*
 
 *R2: I used Google to explain how to calculate hours versus minutes (* 24 instead of * 1440). I also used Google to learn how to copy headers from the DB Browser All final queries, results, and conclusions are my own.*
+
+# Assignment 8
+## Part 0
+
+Query (Q)
+
+SELECT
+COUNT(*) AS rows_total,
+COUNT(end_station_id) AS with_end_station,
+COUNT(DISTINCT start_station_id) AS distinct_start_ids,
+COUNT(DISTINCT rider_type) AS rider_type_spellings
+FROM trips;
+
+Result (R)
+
+rows_total	with_end_station	distinct_start_ids	rider_type_spellings
+250000	        246233	                25	                  6
+
+
+*Q0c: The with_end_station and rider_type_spellings results are diagnostic. They tell us that several of our trips (250k - 246,233 = 3,767 trips) lack an end station and although we genuinely only have 2 rider types (casual and member) we have seemingly six different rider types accounted for in our data.* 
+
+
+
+
+## Part 1
+
+
+
+
+
+## Part 2
+
+
+
+
+
+
+## Part 3
+
+
+
+
+
+
+
+## Part 4
+
+
+
+
+
+
+
+## Part 5
+
+
+
+
+
+
+## Part 6
+
+
+
+
+
+
+
+## Part 7
+
+
+
+
+
+
+
+## Part 8 (not graded)
+
+
+
+
+
+
+
+## Part 9 (not graded)
+
+
+
+
+
+
+## Part 10 (not graded)
+
+
+
+
+
+
+## Reflection & AI Disclosure (not graded)
