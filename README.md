@@ -74,3 +74,20 @@ For both 2025 and 2026 notebooks:
 
 ### Limitations
 Our data for a few variables is only over a short period of time. There are stations that have been excluded because they were missing both end station IDs and end times. We should collect information from our rider that could be influencing their riding (e.g., reasons for riding, etc.). The one minute cutoff rule implemented in the analysis causes us to lose data points that may otherwise influence our analysis. We excluded trips longer than 24 hours (bikes likely never docked properly).
+
+
+
+### Monday briefing
+*Must add first:* export RIDE_KNOX_TOKEN=… # ask the data team
+
+*Windows:* source .venv/Scripts/activate (.venv/bin/activate for Mac)
+
+*Bash:* ./pipeline/check_data.sh 2025
+
+*Inputs:* trips_YYYY.csv *or* trips_YYYY_MM.csv; ride_knox.db
+
+*Outputs:* out_assignment11/*.txt
+
+*Safe to re-run:* yes (trip_id primary key rejects re-loads)
+
+*Fails if:* the API key, export or database is missing, or has more than 1,000 duplicates

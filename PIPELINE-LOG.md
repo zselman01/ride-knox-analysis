@@ -254,8 +254,61 @@ ERROR: File has more than 100 duplicate rows
 
 *5c*
 ```bash
+: "${RIDE_KNOX_API_KEY:?set RIDE_KNOX_API_KEY before running}"
 
+export RIDE_KNOX_API_TOKEN=
+
+$ ./pipeline/check_data.sh 2025
+./pipeline/check_data.sh: line 4: RIDE_KNOX_API_KEY: set RIDE_KNOX_API_KEY before running
 ```
+
+*Q5d: My script now mentioned RIDE_KNOX_API_KEY, but never actually contains the key and this is important because the token still lives in the environment without it actually being in my script where other people can see that "secret" information.*
+
+*Q5e: .env goes in .gitignore while .env.example (keys, no values) gets committed to allow an analyst that clones my repo to have a blueprint/template of the key needed (the key) without actually giving them the key to protect against having secret, detrimental information just out there.*
+
+## Part 6
+```bash
+$ python -m venv .venv
+
+$ source .venv/Scripts/activate
+(.venv)
+
+$ which python
+/c/Users/zselm/OneDrive - University of Tennessee/Personal/Data Science Toolkit/ride-knox-analysis/.venv/Scripts/python
+(.venv)
+```
+
+*6b*
+```bash
+$ pip freeze | wc -l
+0
+(.venv)
+
+$ pip freeze | wc -l
+15
+(.venv)
+```
+
+- requirements_assignment11.txt file
+
+pandas==3.1.0
+matplotlib==3.11.2
+openpyxl==3.1.5
+
+*Q6c: The first number from 6b was 0 because I hadn't installed any packages. After installing, the second number from 6b was 15. If I had shipped the pip freeze version, analysts wouldn't know which versions of the packages were used when I was working on the files.*
+
+*6d*
+- Monday briefing
+
+*Must add first:* export RIDE_KNOX_TOKEN=… # ask the data team
+*Windows:* source .venv/Scripts/activate (.venv/bin/activate for Mac)
+*Bash:* ./pipeline/check_data.sh 2025
+*Inputs:* trips_YYYY.csv *or* trips_YYYY_MM.csv; ride_knox.db
+*Outputs:* out_assignment11/*.txt
+*Safe to re-run:* yes (trip_id primary key rejects re-loads)
+*Fails if:* the API key, export or database is missing, or has more than 1,000 duplicates
+
+*Q6e: The "Safe to re-run" and "Fails if" items from the "Monday briefing" are two of the five that nobody writes but everybody needs. They're the difference between a colleague running my pipeline and a colleague messaging me on vacation because they're unable to determine what's safe to re-run vs when the script/code fails.*
 
 ## Part 9
 ## Reflection

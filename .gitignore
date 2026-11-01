@@ -9,3 +9,5 @@ trips_2026_h1.csv
 out/
 out_assignment11/
 logs/
+.env
+.venv/
