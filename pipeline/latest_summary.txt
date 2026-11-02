@@ -1,0 +1,15 @@
+Total Stations Read: 25
+
+Total Trips Read: 250000
+
+--- 3 Most Pressured Stations ---
+Station: S11 | Pressure: 1183.0
+Station: S07 | Pressure: 1177.0
+Station: S01 | Pressure: 1130.0
+
+--- 3 Least Pressured Stations ---
+Station: S23 | Pressure: 174.0
+Station: S24 | Pressure: 193.0
+Station: S21 | Pressure: 283.0
+
+summarize.py succeeded
