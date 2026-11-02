@@ -86,7 +86,7 @@ Our data for a few variables is only over a short period of time. There are stat
 
 *Inputs:* trips_YYYY.csv *or* trips_YYYY_MM.csv; ride_knox.db
 
-*Outputs:* out_assignment11/*.txt
+*Outputs:* out_assignment11/*.txt, out_assignment11/stations_pressure.csv
 
 *Safe to re-run:* yes (trip_id primary key rejects re-loads)
 

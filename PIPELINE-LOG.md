@@ -232,7 +232,7 @@ out_assignment11/q1 station notes.txt
 
 ## Part 5
 ```bash
-export RIDE_KNOX_DB="${RIDE_KNOX_DB:-ride_knox.db}”
+export RIDE_KNOX_DATA="${RIDE_KNOX_DATA:-.}”
 ```
 ```bash Environment variable unset
 $ ./pipeline/check_data.sh 2025
@@ -304,11 +304,227 @@ openpyxl==3.1.5
 *Windows:* source .venv/Scripts/activate (.venv/bin/activate for Mac)
 *Bash:* ./pipeline/check_data.sh 2025
 *Inputs:* trips_YYYY.csv *or* trips_YYYY_MM.csv; ride_knox.db
-*Outputs:* out_assignment11/*.txt
+*Outputs:* out_assignment11/*.txt, out_assignment11/stations_pressure.csv
 *Safe to re-run:* yes (trip_id primary key rejects re-loads)
 *Fails if:* the API key, export or database is missing, or has more than 1,000 duplicates
 
 *Q6e: The "Safe to re-run" and "Fails if" items from the "Monday briefing" are two of the five that nobody writes but everybody needs. They're the difference between a colleague running my pipeline and a colleague messaging me on vacation because they're unable to determine what's safe to re-run vs when the script/code fails.*
+
+## Part 7
+
+*7a*
+.mode csv
+.headers on
+.once out_assignment11/station_pressure.csv
+SELECT t.start_station_id, s.station_name, s.docks, COUNT(*) AS total_departures, (COUNT(*) / s.docks) AS trips_per_dock
+FROM trips t
+LEFT JOIN stations s ON t.start_station_id = s.station_id
+GROUP BY t.start_station_id 
+ORDER BY trips_per_dock DESC;
+
+*7b*
+```bash
+$ sqlite3 ride_knox.db < ./pipeline/station_pressure.sql
+```
+*Output*
+
+start_station_id	station_name	docks	total_departures	trips_per_dock
+S11	Cumberland Ave & 17th St	16	18934	1183
+S07	The Hill - Ayres Hall	12	14132	1177
+S01	Market Square	20	22606	1130
+...
+S24	Sequoyah Hills Park	10	1935	193
+S23	Bearden - Kingston Pike	12	2095	174
+S99			263	
+
+*7c*
+```bash
+import sys
+import pandas as pd
+
+file = sys.argv[1]
+
+df = pd.read_csv(file)
+
+if df.empty:
+    print("Error: The CSV provided has no rows.")
+    sys.exit(1)
+
+total_trips = df['total_departures'].sum()
+
+station_pressure = df[['start_station_id', 'trips_per_dock']]
+station_count = df['start_station_id'].value_counts()
+
+high_stations = station_pressure.sort_values(['trips_per_dock','start_station_id'], ascending=[False, True]).head(3)
+low_stations = station_pressure.sort_values(['trips_per_dock', 'start_station_id'], ascending=[True, True]).head(3)
+
+print(f"Total Stations Read: {len(station_count)}")
+print(f"\nTotal Trips Read: {total_trips}")
+
+# print(station_pressure)
+
+print("--- 3 Most Pressured Stations ---")
+for station, count in high_stations.values:
+    print(f"Station: {station} | Pressure: {count}")
+
+print("\n--- 3 Least Pressured Stations ---")
+for station, count in low_stations.values:
+    print(f"Station: {station} | Pressure: {count}")
+
+$ python ./pipeline/summarize.py ./out_assignment11/station_pressure.csv
+Total Stations Read: 25
+
+Total Trips Read: 250000
+
+--- 3 Most Pressured Stations ---
+Station: S11 | Pressure: 1183.0
+Station: S07 | Pressure: 1177.0
+Station: S01 | Pressure: 1130.0
+
+--- 3 Least Pressured Stations ---
+Station: S23 | Pressure: 174.0
+Station: S24 | Pressure: 193.0
+Station: S21 | Pressure: 283.0
+```
+
+*7d*
+```bash Unbroken
+$ sqlite3 ride_knox.db < ./pipeline/station_pressure.sql && python ./pipeline/summarize.py ./out_assignment11/station_pressure.csv
+Total Stations Read: 25
+
+Total Trips Read: 250000
+
+--- 3 Most Pressured Stations ---
+Station: S11 | Pressure: 1183.0
+Station: S07 | Pressure: 1177.0
+Station: S01 | Pressure: 1130.0
+
+--- 3 Least Pressured Stations ---
+Station: S23 | Pressure: 174.0
+Station: S24 | Pressure: 193.0
+Station: S21 | Pressure: 283.0
+```
+``` Broken
+$ sqlite3 ride_knox_nonexistent.db < ./pipeline/station_pressure.sql && python ./pipeline/summarize.py ./out_assignment11/station_pressure.csv
+Parse error near line 5: no such table: trips
+```
+
+*Q7e: The 24 stations (minus S99) account for 249,737 of the 250,000 trips. The difference are the 263 trips from the S99 stations that the JOIN drops because S99 is not in the stations table.*
+
+*Q7f: The module prefers to aggregate in SQL and analyzes in Python to keep bash script in the former and the analysis (pandas) in the latter. It is better to keep small Python scripts with one job each and let Shell script chain them.*
+
+*Q7g: Because GUI's cannot be scheduled, the DB Browser was explicitly ruled out.*
+
+## Part 8
+
+*8a*
+```bash
+$ ./pipeline/run_briefing.sh 2025
+[2026-11-01T21:25:50] check_data.sh starting for 2025
+Row count: 250600, Count of rows with an end station id: 246826, Count of rows without an end station id: 3774
+out_assignment11/Market_Square
+Row count: 250600, Distinct row count: 250000, Exact duplicates: 600
+Exit code: 0
+
+Script succeeded
+
+[2026-11-01T21:25:50] sqlite3 query starting for 2025
+
+sqlite3 query succeeded
+
+[2026-11-01T21:25:50] summarize.py starting for 2025
+Total Stations Read: 25
+
+Total Trips Read: 250000
+
+--- 3 Most Pressured Stations ---
+Station: S11 | Pressure: 1183.0
+Station: S07 | Pressure: 1177.0
+Station: S01 | Pressure: 1130.0
+
+--- 3 Least Pressured Stations ---
+Station: S23 | Pressure: 174.0
+Station: S24 | Pressure: 193.0
+Station: S21 | Pressure: 283.0
+
+summarize.py succeeded
+
+[2026-11-01T21:25:50] run_briefing.sh is Done!
+(.venv)
+```
+
+*8b: Second Run*
+```bash
+$ ./pipeline/run_briefing.sh 2025
+[2026-11-01T21:29:32] check_data.sh starting for 2025
+Row count: 250600, Count of rows with an end station id: 246826, Count of rows without an end station id: 3774
+out_assignment11/Market_Square
+Row count: 250600, Distinct row count: 250000, Exact duplicates: 600
+Exit code: 0
+
+Script succeeded
+
+[2026-11-01T21:29:32] sqlite3 query starting for 2025
+
+sqlite3 query succeeded
+
+[2026-11-01T21:29:32] summarize.py starting for 2025
+Total Stations Read: 25
+
+Total Trips Read: 250000
+
+--- 3 Most Pressured Stations ---
+Station: S11 | Pressure: 1183.0
+Station: S07 | Pressure: 1177.0
+Station: S01 | Pressure: 1130.0
+
+--- 3 Least Pressured Stations ---
+Station: S23 | Pressure: 174.0
+Station: S24 | Pressure: 193.0
+Station: S21 | Pressure: 283.0
+
+summarize.py succeeded
+
+[2026-11-01T21:29:32] run_briefing.sh is Done!
+(.venv)
+```
+```bash Module 10 comparison to confirm that the output is the same
+$ wc -l ./out_assignment11/station_pressure.csv
+26 ./out_assignment11/station_pressure.csv
+(.venv)
+
+$ wc -l ./out_assignment11/pressure_run1.csv
+26 ./out_assignment11/pressure_run1.csv
+(.venv)
+
+$ cat ./out_assignment11/station_pressure.csv ./out_assignment11/pressure_run1.csv | sort -u | wc -l
+26
+(.venv)
+
+# My file is idempotent because running the script twice leaves the repo in the same state as running it once
+```
+
+*8d*
+```bash
+$ git -C . add pipeline/latest_summary.txt
+warning: in the working copy of 'pipeline/latest_summary.txt', LF will be replaced by CRLF the next time Git touches it
+(.venv)
+
+$ git -C . commit -m "Add latest station pressure summary" || echo "nothing to commit"
+[feature/bash-week11-automation 44d0d64] Add latest station pressure summary
+ 1 file changed, 15 insertions(+)
+ create mode 100644 pipeline/latest_summary.txt
+(.venv)
+
+$ git -C . commit -m "Add latest station pressure summary" || echo "nothing to commit"
+On branch feature/bash-week11-automation
+...
+no changes added to commit (use "git add" and/or "git commit -a")
+nothing to commit
+(.venv)
+```
+
+*Q8e: The plain > would have overriden all of the files instead of the desired result which was to append. This matters for Part 9 where we'll be using cron meaning we would lose all of the history from the previous runs if `tee` wasn't used*
 
 ## Part 9
 ## Reflection

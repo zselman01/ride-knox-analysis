@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail #e: stop on the first command that fails, -u: a misspelled variable is an error, not an empty string, -o pipefail: a pipeline fails if any stage fails, not just the last one
 
-: "${RIDE_KNOX_API_KEY:?set RIDE_KNOX_API_KEY before running}"
+# : "${RIDE_KNOX_API_KEY:?set RIDE_KNOX_API_KEY before running}"
 
-export RIDE_KNOX_DB="${RIDE_KNOX_DB:-.}"
+export RIDE_KNOX_DATA="${RIDE_KNOX_DATA:-.}"
 
-DATA_DIR="${RIDE_KNOX_DB:-.}"
+DATA_DIR="${RIDE_KNOX_DATA:-.}"
 [ -d "$DATA_DIR" ] || { echo "usage: $0 directory does not exist" >&2; exit 1; }
 
 YEAR="${1:-}"

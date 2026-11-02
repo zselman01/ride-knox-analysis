@@ -11,3 +11,4 @@ out_assignment11/
 logs/
 .env
 .venv/
+ride_knox_nonexistent.db
