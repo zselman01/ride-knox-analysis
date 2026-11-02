@@ -7,3 +7,8 @@ trips_2025.csv
 trips_2026_07.csv
 trips_2026_h1.csv
 out/
+out_assignment11/
+logs/
+.env
+.venv/
+ride_knox_nonexistent.db
