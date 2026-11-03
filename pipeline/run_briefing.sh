@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+cd "$(dirname "$0")/.."
+echo "$(dirname "$0")/.."
+
+source .venv/Scripts/activate
+
+
 YEAR="${1:-$(date -d +%Y)}"
 
 STAMP=$(date +%Y-%m-%dT%H:%M:%S)
@@ -25,8 +31,8 @@ echo -e "\n[$STAMP] summarize.py starting for $YEAR" | tee -a "./logs/briefing.l
 if python ./pipeline/summarize.py ./out_assignment11/station_pressure.csv; then
     echo -e "\nsummarize.py succeeded"
 else
-    echo "ERROR: summary.py did not run properly" >&2; exit 1;
-fi | tee -a "./logs/briefing.log" > "./pipeline/latest_summary.txt"
+    echo "ERROR: summarize.py did not run properly" >&2; exit 1;
+fi | tee -a "./logs/briefing.log" | tee "./pipeline/latest_summary.txt"
 
 # In Bash
 # git -C . add pipeline/latest_summary.txt # it stages one specific file
