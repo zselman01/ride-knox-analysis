@@ -527,4 +527,129 @@ nothing to commit
 *Q8e: The plain > would have overriden all of the files instead of the desired result which was to append. This matters for Part 9 where we'll be using cron meaning we would lose all of the history from the previous runs if `tee` wasn't used*
 
 ## Part 9
+
+*9a*
+```bash Runs run_briefing.sh for 2025 at 07:15 every Monday, capturing both normal output and errors into logs/cron.log. 
+15 07 * * 1 ./ride-knox-analysis/pipeline/run_briefing.sh >> ./ride-knox-analysis/logs/cron.log 2>&1
+```
+15 - marks the minute the job is run
+
+07 - marks the hour the job is run
+
+`*` - marks that any day a during the week that a Monday falls on the job is run
+
+`*` - marks that Mondays during all months the job is run
+
+1 - marks the day of the week (Monday) that the job is run 
+
+*9b*
+
+`cd "$(dirname "$0")"` is the one from the lecture slides that makes the cron run correctly no matter which directory it is launched from.
+
+To change any Python call to one that does not depend on a virtual environment being active we have to activate the venv inside the script, or call `/full/path/.venv/bin/python` directly.
+
+*9c*
+```bash First run using env -i (Needed to add PATH= because environment is completely wiped so needs to be redirected to Bash)
+$ env -i PATH=/usr/bin:/bin ./pipeline/run_briefing.sh 2025
+[2026-11-02T17:50:33] check_data.sh starting for 2025
+Row count: 250600, Count of rows with an end station id: 246826, Count of rows without an end station id: 3774
+out_assignment11/Market_Square
+Row count: 250600, Distinct row count: 250000, Exact duplicates: 600
+Exit code: 0
+
+Script succeeded
+
+[2026-11-02T17:50:33] sqlite3 query starting for 2025
+./pipeline/run_briefing.sh: line 17: sqlite3: command not found
+ERROR: sqlite query did not run properly
+(.venv)
+```
+```bash Second run using env -i to fix failing run_briefing.sh
+$ env -i PATH="/usr/bin:/c/Program Files/sqlite:/c/Users/zselm/OneDrive - University of Tennessee/Personal/Data Science Toolkit/ride-knox-analysis/.venv/Scripts" PWD="$PWD" HOME="$HOME" SYSTEMROOT="/c/Windows" TEMP="/tmp" TMPDIR="/tmp" ./pipeline/run_briefing.sh 2025 sqlite3 python
+[2026-11-02T19:32:33] check_data.sh starting for 2025
+Row count: 250600, Count of rows with an end station id: 246826, Count of rows without an end station id: 3774
+out_assignment11/Market_Square
+Row count: 250600, Distinct row count: 250000, Exact duplicates: 600
+Exit code: 0
+
+Script succeeded
+
+[2026-11-02T19:32:33] sqlite3 query starting for 2025
+
+sqlite3 query succeeded
+
+[2026-11-02T19:32:33] summarize.py starting for 2025
+
+[2026-11-02T19:32:33] run_briefing.sh is Done!
+(.venv)
+```
+*I ended up having to make quite a few changes because I didn't know we were supposed to run the lines from 9b (since we didn't run the actual `cron` Job). I've learned a new method, but I believe the previous commands from 9b wouold have avoided me having to do this longer method. The Python call would have been responsible for making sure I didn't have to add that path line like I did in the `Bash` command*
+
+```bash Using the commands from 9b (could have also been placed in run_briefing.sh; would have been easier to run)
+$ env -i PATH="/usr/bin:/c/Program Files/sqlite" PWD="$PWD" HOME="$HOME" SYSTEMROOT="/c/Windows" TEMP="/tmp" TMPDIR="/tmp" ./pipeline/run_briefing.sh 2025 sqlite3                                      ./pipeline/..
+[2026-11-02T19:57:14] check_data.sh starting for 2025
+Row count: 250600, Count of rows with an end station id: 246826, Count of rows without an end station id: 3774
+out_assignment11/Market_Square
+Row count: 250600, Distinct row count: 250000, Exact duplicates: 600
+Exit code: 0
+
+Script succeeded
+
+[2026-11-02T19:57:14] sqlite3 query starting for 2025
+
+sqlite3 query succeeded
+
+[2026-11-02T19:57:14] summarize.py starting for 2025
+
+[2026-11-02T19:57:14] run_briefing.sh is Done!
+(.venv)
+```
+
+*Q9d: My interactive shell has an activated venv, a full PATH, and a working directory that I chose. Of those three, cron will not give me an acticated venv. Activating the venv inside the script (or calling /full/path/.venv/bin/python directly) compensates for the activated venv. Adding `cd "$(dirname "$0")"` at the top of the script allows absolute paths to be used for everything to compensate for the PATH. Cron automatically runs the script with the home directory as the working directory to compensate for the working directory.*
+
+## Part 10 (Challenge)
+
+*C1*
+```bash New loop for all 24 stations
+$ ./pipeline/station_files.sh
+S01 22656
+S02 16570
+S03 10633
+S04 14302
+S05 15435
+S06 26112
+S07 14177
+S08 25044
+S09 13032
+S10 7268
+S11 18983
+S12 9492
+S13 6069
+S14 8324
+S15 3782
+S16 4258
+S17 7134
+S18 4691
+S19 5280
+S20 3548
+S21 2843
+S22 6662
+S23 2103
+S24 1939
+Number of stations with 0 trips: 0(.venv)
+```
+
+*The departures across my 24 stations is 250,337. This does not align with the 250,600 trips in the file because we no longer have the test station S99 (accounted for 250600 - 250337 = 263 trips) since that station is not in stations.xlsx.*
+
+*C2: The one thing that must be added to `run_briefing.sh` so the dependent loop cannot silently run against a stale or missing out_assignment11/stations.csv is a guard clause that makes sure the proper csv exists before running it*
+```bash
+[ -s out_assignment11/stations.csv ] || { echo "Error: out_assignment11/stations.csv is missing or stale. Ensure the Python script has run first and successfully"; >&2; exit 1; }
+```
+
 ## Reflection
+*R1. Four tasks this week had a version that exits 0 and is still wrong: the missing set -eo pipefail in 0c, the unquoted variable in 2d, the $(ls) loop in 4d, and the silently short join in 7e. I would have been least likely to catch the missing set -eo pipefail on my own. To avoid this in the future, I will create a .sh template that I will copy to make files that will always have the proper commands at the top to make sure this is something I won't have to worry about in the future.*
+
+*R2. In one or two sentences: your pipeline now runs unattended. The single failure that would be hardest for the ops lead to notice is a false positive success. To make it noisy, I would add guards using && and ||.*
+
+*R3. AI disclosure: describe any use of generative AI tools in this assignment, or state "No generative AI tools were used." Example: "I used Google a lot for this assignment because Bash is completely new to me and caused a lot of confusion. I tried to look up why I was getting the same result for 2c regardless of if I had quotations or not, but I was not successful. I also couldn't figure out why my >>SQL ... SQL commands weren't working in the .sql file. I used Google as a refresh for creating loops in Python and Bash. I needed Google a lot to get the syntax correct. `"($)"` versus `$()` confused me. I went down the rabbit hole to figure out how to get env -i working in Part 9. All final scripts, results, and conclusions are my own."*
+
