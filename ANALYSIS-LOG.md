@@ -1,0 +1,278 @@
+# DATA 501; Assignment 12 Analysis Log
+
+**Name: Zaharia Selman**
+**NetID: zselman**
+**R version: 4.6.2 (2026-10-29 ucrt)**
+**tidyverse version: tidyverse 2.0.0**
+
+## Part 0
+
+*0a*
+
+> getwd()
+[1] "C:/Users/zselm/OneDrive - University of Tennessee/Personal/Data Science Toolkit/ride-knox-analysis"
+
+*I did not have to type a full path to my data because we created the R file inside of ride_knox_analysis already.*
+
+*0b*
+
+> library(tidyverse)
+── Attaching core tidyverse packages ───────────────────────────────────────────────────────────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.2.1     ✔ readr     2.2.0
+✔ forcats   1.0.1     ✔ stringr   1.6.0
+✔ ggplot2   4.0.3     ✔ tibble    3.3.1
+✔ lubridate 1.9.5     ✔ tidyr     1.3.2
+✔ purrr     1.2.2     
+── Conflicts ─────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package to force all conflicts to become errors
+> library(readxl)
+
+*0c*
+
+> count(trips, rider_type, sort = TRUE)
+# A tibble: 6 × 2
+  rider_type      n
+  <chr>       <int>
+1 member     153388
+2 casual      88395
+3 Member       3170
+4 MEMBER       2369
+5 Casual       1906
+6 CASUAL       1372
+
+*Q0d: A classmate's script opens with install.packages("tidyverse") so that "it works on any machine." `install.packages(...)` belongs in the console, never in the script because it is a one-time setup for your computer and for reproducibility purposes does not match what should only be produced by your script.*
+
+## Part 1
+
+*1a*
+
+> north_docks <- c(12, 10, 12)
+> length(north_docks)
+[1] 3
+> mean(north_docks)
+[1] 11.33333
+> sum(north_docks)
+[1] 34
+
+*1b*
+
+> share_of_van_cap <- north_docks / north_docks_total * 100
+> share_of_van_cap[1]
+[1] 35.29412
+
+*1c*
+
+> north_docks > 10
+[1]  TRUE FALSE  TRUE
+> mean(north_docks > 10)
+[1] 0.6666667
+
+*The second number represents the average of all values greater than 10 in the vector.*
+
+*Q1d: 1c is a shortcut you will use again in Part 5. `mean(x > 10)` gives me a proportion rather than an average dock count because only those values that return TRUE from the boolean command are included in the calculation for mean (not all the numbers if they are not all > 10).*
+
+## Part 2
+
+*2a*
+
+> trips <- read_csv("trips_2025.csv")
+Rows: 250600 Columns: 8                                                                                                              
+── Column specification ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (6): trip_id, start_station_id, start_station_name, end_station_id, rider_type, bike_type
+dttm (2): start_time, end_time
+
+*2b*
+
+**Commented out to avoid formatting issues below output**
+<!-- > glimpse(stations)
+Rows: 24
+Columns: 7
+$ station_id     <chr> "S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08", "S09", "S10", "S11", "S12", "S13", "S14", "S15", "S1…
+$ station_name   <chr> "Market Square", "Gay Street & Union Ave", "Krutch Park", "Old City - Jackson Ave", "World's Fair Park", "Ho…
+$ neighborhood   <chr> "Downtown", "Downtown", "Downtown", "Old City", "World's Fair Park", "UT Campus", "UT Campus", "UT Campus", …
+$ latitude       <dbl> 35.9649, 35.9662, 35.9636, 35.9721, 35.9622, 35.9553, 35.9546, 35.9560, 35.9550, 35.9448, 35.9575, 35.9601, …
+$ longitude      <dbl> -83.9197, -83.9184, -83.9186, -83.9151, -83.9265, -83.9264, -83.9256, -83.9295, -83.9250, -83.9376, -83.9330…
+$ docks          <dbl> 20, 16, 12, 16, 20, 24, 12, 24, 16, 12, 16, 12, 10, 12, 10, 10, 12, 10, 12, 10, 10, 12, 12, 10
+$ year_installed <dbl> 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2023, 2023, 2022, 2023, 2023, 2023, 2024, 2024, 2023, 2024, … -->
+
+*2c*
+
+> count(trips, start_station_name)
+# A tibble: 73 × 2
+   start_station_name           n
+   <chr>                    <int>
+ 1 AG CAMPUS - MORGAN HALL    127
+ 2 Ag Campus - Morgan Hall   7004
+ 3 BEARDEN - KINGSTON PIKE     49
+ 4 BROADWAY & CENTRAL         112
+ 5 Bearden - Kingston Pike   2028
+ 6 Broadway & Central        5094
+ 7 CASWELL PARK                54
+ 8 CUMBERLAND AVE & 17TH ST   332
+ 9 Caswell Park              2749
+10 Cumberland Ave & 17th St 18342
+# ℹ 63 more rows
+# ℹ Use `print(n = ...)` to see more rows
+> 
+> trips |>
++   distinct(start_station_name) |>
++   nrow()
+[1] 73
+
+*Matches with the anchor: trips_2025.csv holds 250,600 rows, with 73 distinct start_station_name values as read_csv() imports them.*
+
+*Q2d: Module 10 counted 121 distinct raw values in this same column (start_station_name), straight from the text of the file. However, I got 73 here, not 121. The read_csv() argument responsible, is `trim_ws`. The one-line change that reproduces Module 10's number is `trim_ws = FALSE`. `readr` assumed that I wanted white spaces removed (truncating the number of station names present in the data) before I ever looked at it.*
+
+*Q2e: The two columns read_csv() typed as <dttm> are start_time and end_time. Calculating the duration is one specific thing in Part 4 that would break if those had come in as <chr> instead.*
+
+*Q2f: Stations has 24 rows and trips has 250,600. These two objects are called `tibble/data.frame` in `R` and a signle column of one of them is called `df$col`.*
+
+## Part 3
+
+*3a*
+
+> clean <- trips |>
++   distinct() |>
++   filter(start_station_id != "S99",
++          is.na(end_station_id) | end_station_id != "S99") |>
++   mutate (
++     rider_type = str_to_lower(str_trim(rider_type)),
++     duration_min = as.numeric(difftime(end_time, start_time, units="mins"))
++   ) |>
++   filter(duration_min >=1, duration_min <= 1440)
+> 
+> clean |> nrow()
+[1] 247967
+
+*3b*
+
+> round_trips <- clean |>
++   filter(start_station_id == end_station_id)
+> 
+> round_trips |> nrow()
+[1] 30112
+
+*3c*
+
+> one_way <- clean |>
++   filter(start_station_id != end_station_id)
+> 
+> one_way |> nrow()
+[1] 214129
+
+*3d*
+
+*The gap between what I got for 3b and 3c and 247,967 trips is the 3,726 trips that have a missing end_station_id (dropped by R because it doesn't fit into either filter category). I have decided that those trips belong in a category of their own similar to our flagged column in previous modules to reflect an operational issue that may need to be addressed later.*
+
+> one_way <- clean |>
++   filter(start_station_id != end_station_id)
+> 
+> one_way |> nrow()
+[1] 214129
+> 
+> missing_end <- clean |>
++   filter(is.na(end_station_id))
+> 
+> missing_end |> nrow()
+[1] 3726
+
+**VERSUS**
+
+> one_way_missing_end <- clean |>
++   filter(start_station_id != end_station_id | is.na(end_station_id))
+> 
+> one_way_missing_end |> 
++   nrow()
+[1] 217855
+
+*3e*
+
+> cat("One-way:", nrow(one_way), "+ Round trip:", nrow(round_trips),
++     "+ End Unknown:", nrow(missing_end), "= Total cleaned trips: ", nrow(clean))
+One-way: 214129 + Round trip: 30112 + End Unknown: 3726 = Total cleaned trips:  247967
+
+*Q3f: Class hit this same trap on a different comparison. The general rule about NA inside filter() that covers both cases is that in R, NA != "S99" is NA, and filter() drops rows that aren't TRUE. Therefore, we should fix it with filter(is.na(end_station_id) | end_station_id != "S99"). A student who only ever tested their pipeline against a row count would never find it, because the issue (NA) is embedded within the trips table.*
+
+*Q3g: One of the 3d fixes keeps trips with no end station in the "one-way" group. The ops lead might actually want those 3,726 trips in a category of their own if they later want to investigate data that supports the lack of end_station_ids being reported for certain stations, docks, neighborhoods, etc.*
+
+## Part 4
+
+*4a & 4b*
+
+> clean <- clean |>
++   mutate(
++     month = month(start_time, label=TRUE),
++     hour = hour(start_time)
++   )
+> clean <- clean |>
++   mutate(
++     is_evening = hour >= 16
++   )
+> mean(clean$is_evening)
+[1] 0.40457
+
+*Q4c: You created month as a labelled month rather than a number. This allows me to have the specific month names in the Part 7 figure so that just numbers aren't displayed which would make the figure harder to read/understand.*
+
+*Q4d: 4a and 4b could have been one `mutate()` call instead of two; `is_evening` depends on `hour`, which 4a creates. The single-call version is legal because later expressions can use earlier expressions in the same call. However, a reviewer may prefer the call being written as two to avoid anything getting overwritten by the `mutate()` call.*
+
+## Part 5
+
+*5a & 5b*
+
+> mix <- clean |>
++   group_by(month) |>
++   summarise(trips = n(), casual_pct = (sum(rider_type == "casual") / n()) * 100, median_min = median(duration_min), .groups="drop")
+> 
+> mix
+# A tibble: 12 × 4
+   month trips casual_pct median_min
+   <ord> <int>      <dbl>      <dbl>
+ 1 Jan   10791       43.5       14.1
+ 2 Feb   13280       42.7       14.0
+ 3 Mar   19725       43.4       14.3
+ 4 Apr   25396       44.3       14.2
+ 5 May   29613       44.6       14.4
+ 6 Jun   31279       44.2       14.2
+ 7 Jul   26926       33.8       13.5
+ 8 Aug   24611       30.4       13.4
+ 9 Sep   22947       27.4       13.1
+10 Oct   19568       25.5       13.0
+11 Nov   13587       24.4       13.0
+12 Dec   10244       22.7       12.8
+
+*5c*
+
+> cat("Percent point drop in casual percentage from June to July 2025:", mix$casual_pct[6] - mix$casual_pct[7])
+Percent point drop in casual percentage from June to July 2025: 10.41845
+> cat("Drop in median duration (in minutes) from June to December 2025:", mix$median_min[6] - mix$median_min[12])
+Drop in median duration (in minutes) from June to December 2025: 1.4
+
+*5d*
+
+*Q5d: Class charted casual trips as a count and found a cliff. Here, I measured the same period as a share. The count shows raw scores (can clearly see the impact of the cliff) that the percentage/share cannot show. The percentage/share shows a value that can be compared across months that the count cannot show.*
+
+*Q5e: Your median_min falls steadily across the year, but nothing about any individual rider's habits changed. Using my casual_pct column and the class figure that casual trips run about 19.0 minutes against a member's 11.6, the steady fall in median_min across the year can be explained by the decline in the proportion of casual riders (the group with the higher median duration). This kind of effect is bringing the overall median duration down.*
+
+## Part 6
+
+*6a*
+
+
+
+
+## Part 7
+## Part 8
+## Part 9
+## Part 10
+## Part 11
+## Part 12
+## Reflection
+
+*R1. Two tasks this week had a version that ran perfectly and was wrong: the filter() in 3c, and the free-scales facet in 10c. I would have been least likely to catch the filter() on my own. I think an important habit to practice to avoid this includes the exploratory stage of data analysis. Before mutating any new columns, filtering, etc., its important to check the values (and distinct) of every column, any NULL values, and things like that.*
+
+*R2. Through this assignment, I have now drawn the same underlying dataset in matplotlib (Module 4) and in ggplot2. One thing that was genuinely easier using ggplot2 was ... . One thing that was not easier using ggplot2 was ... . The tool that I would probably reach for to sketch a chart nobody but me would see is ggplot2.*
+
+*AI Disclosure: I used Google to remeber how to use the simple math operations (instead of a loop) for Part 1b. This is very convenient because it is done for every index in the vector without explicitly having to write out a for loop. I also used Google to learn how to print text out to the console in R (similar to bash using `cat`), set a mutate column to a boolean value when a condition is met (similar to 1d), and fix a warning message that I recevied about trying to call summarise in 5a using mix$summarise. This can't be done because summarise is not a column in the tibble, but the actual columns can be called using that method. All final code, figures, and conclusions are my own."*

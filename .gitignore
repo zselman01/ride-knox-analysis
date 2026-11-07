@@ -12,3 +12,5 @@ logs/
 .env
 .venv/
 ride_knox_nonexistent.db
+.Rproj.user
+figs_assignment_12/
