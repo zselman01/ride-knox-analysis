@@ -25,6 +25,7 @@ CREATE VIEW docks_by_year AS
 SELECT y.yr, dh.station_id, dh.docks
 FROM (SELECT '2025' AS yr UNION ALL SELECT '2026') y
 JOIN dock_history dh
-  ON dh.valid_from = (SELECT MAX(valid_from) FROM dock_history d2
-                       WHERE d2.station_id = dh.station_id
-                         AND d2.valid_from <= y.yr || '-07-01');
+  ON dh.valid_from = (SELECT MAX(valid_from) FROM dock_history dh2
+                       WHERE dh2.station_id = dh.station_id
+                         AND dh2.valid_from <= y.yr || '-07-01'); -- Meaning: For 2025 what was the no. of docks (MAX) for July 1, 2025 
+                                                                  -- and for 2026 what was the no. of docks (MAX) before July 1, 2026

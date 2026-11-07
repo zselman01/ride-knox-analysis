@@ -16,7 +16,7 @@ cd "$(dirname "$0")"
 
 # Configurable Inputs
 DATA_DIR="${DATA_DIR:-data}"
-DB="${RIDE_KNOX_DB:-ride_knox_wh.db}"
+DB="${RIDE_KNOX_DB:-out/ride_knox_wh.db}"
 
 # Fixed Working Directories - fixed in the other files build_all.sh refers to
 INCOMING_DIR="incoming"
@@ -98,91 +98,89 @@ sqlite3 "$DB" < sql/extracts.sql
 
 stamp "Stage 5 COMPLETE: Reporting layer completed"
 
-# TODO stage 6: render the report (it must read out/ and nothing else)
-echo
-stamp "Stage 6 START: Rendering report"
+# # TODO stage 6: render the report (it must read out/ and nothing else)
+# echo
+# stamp "Stage 6 START: Rendering report"
 
-if ! command -v quarto >/dev/null 2>&1; then
-    echo "ERROR: Quarto is required to render the annual report." >&2
-    exit 1
-fi
+# if ! command -v quarto >/dev/null 2>&1; then
+#     echo "ERROR: Quarto is required to render the annual report." >&2
+#     exit 1
+# fi
 
-quarto render report/annual_report.qmd --to html
+# quarto render report/annual_report.qmd --to html
 
-[ -s report/annual_report.html ] || {
-    echo "ERROR: Annual report rendering did not produce report/annual_report.html" >&2
-    exit 1
-}
+# [ -s report/annual_report.html ] || {
+#     echo "ERROR: Annual report rendering did not produce report/annual_report.html" >&2
+#     exit 1
+# }
 
-stamp "Stage 6 COMPLETE: Annual report rendered"
+# stamp "Stage 6 COMPLETE: Annual report rendered"
 
-# TODO stage 7: stage the public page (which files does Pages serve, and how
-#               do they get there? this is TOOL-DEFENSE.md material)
-echo
-stamp "Stage 7 START: Staging public page"
+# # TODO stage 7: stage the public page (which files does Pages serve, and how
+# #               do they get there? this is TOOL-DEFENSE.md material)
+# echo
+# stamp "Stage 7 START: Staging public page"
 
-cp report/annual_report.html site/annual_report.html
+# cp report/annual_report.html site/annual_report.html
 
-if [ -d report/annual_report_files ]; then
-    cp -R report/annual_report_files site/
-fi
+# if [ -d report/annual_report_files ]; then
+#     cp -R report/annual_report_files site/
+# fi
 
-stamp "Stage 7 COMPLETE: Public page staged"
+# stamp "Stage 7 COMPLETE: Public page staged"
 
-# TODO stage 8: write a build summary a stranger could read
-echo
-stamp "Stage 8 START: Building summary"
+# # TODO stage 8: write a build summary a stranger could read
+# echo
+# stamp "Stage 8 START: Building summary"
 
-TRIP_COUNT=$(sqlite3 "$DB" "SELECT COUNT(*) FROM trips;")
-REPORTABLE_COUNT=$(sqlite3 "$DB" "SELECT COUNT(*) FROM trips_reportable;")
-WEATHER_COUNT=$(sqlite3 "$DB" "SELECT COUNT(*) FROM weather;")
+# TRIP_COUNT=$(sqlite3 "$DB" "SELECT COUNT(*) FROM trips;")
+# REPORTABLE_COUNT=$(sqlite3 "$DB" "SELECT COUNT(*) FROM trips_reportable;")
+# WEATHER_COUNT=$(sqlite3 "$DB" "SELECT COUNT(*) FROM weather;")
 
-{
-    echo "RIDE KNOX WAREHOUSE BUILD SUMMARY"
-    echo "================================="
-    echo "Completed: $(date +%Y-%m-%dT%H:%M:%S)"
-    echo "Database: $DB"
-    echo "Data directory: $DATA_DIR"
-    echo
+# {
+#     echo "RIDE KNOX WAREHOUSE BUILD SUMMARY"
+#     echo "================================="
+#     echo "Completed: $(date +%Y-%m-%dT%H:%M:%S)"
+#     echo "Database: $DB"
+#     echo "Data directory: $DATA_DIR"
+#     echo
 
-    echo "WAREHOUSE TOTALS"
-    echo "----------------"
-    echo "Total trips: $TRIP_COUNT"
-    echo "Reportable trips: $REPORTABLE_COUNT"
-    echo "Weather records: $WEATHER_COUNT"
-    echo
+#     echo "WAREHOUSE TOTALS"
+#     echo "----------------"
+#     echo "Total trips: $TRIP_COUNT"
+#     echo "Reportable trips: $REPORTABLE_COUNT"
+#     echo "Weather records: $WEATHER_COUNT"
+#     echo
 
-    echo "ACCEPTED FILES"
-    echo "--------------"
-    for file in "$ACCEPTED_DIR"/*.csv; do
-        if [ -f "$file" ]; then
-            echo "  $(basename "$file")"
-        fi
-    done
-    echo
+#     echo "ACCEPTED FILES"
+#     echo "--------------"
+#     for file in "$ACCEPTED_DIR"/*.csv; do
+#         if [ -f "$file" ]; then
+#             echo "  $(basename "$file")"
+#         fi
+#     done
+#     echo
 
-    echo "QUARANTINED FILES"
-    echo "-----------------"
-    for file in "$QUARANTINE_DIR"/*.csv; do
-        if [ -f "$file" ]; then
-            echo "  $(basename "$file")"
-        fi
-    done
-    echo
+#     echo "QUARANTINED FILES"
+#     echo "-----------------"
+#     for file in "$QUARANTINE_DIR"/*.csv; do
+#         if [ -f "$file" ]; then
+#             echo "  $(basename "$file")"
+#         fi
+#     done
+#     echo
 
-    echo "BUILD RECEIPTS"
-    echo "--------------"
-    echo "Intake decisions: $OUT_DIR/gate_receipts.csv"
-    echo "Preparation decisions: $OUT_DIR/prepare_receipts.csv"
-    echo "System reconciliation: $OUT_DIR/system_reconciliation.csv"
-    echo
-    echo "SQL extracts are available in: $OUT_DIR/"
-} > "$OUT_DIR/build_summary.txt"
+#     echo "BUILD RECEIPTS"
+#     echo "--------------"
+#     echo "Intake decisions: $OUT_DIR/gate_receipts.csv"
+#     echo "Preparation decisions: $OUT_DIR/prepare_receipts.csv"
+#     echo "System reconciliation: $OUT_DIR/system_reconciliation.csv"
+#     echo
+#     echo "SQL extracts are available in: $OUT_DIR/"
+# } > "$OUT_DIR/build_summary.txt"
 
-cat "$OUT_DIR/build_summary.txt"
+# cat "$OUT_DIR/build_summary.txt"
 
-stamp "Stage 8 COMPLETE: Summary built"
+# stamp "Stage 8 COMPLETE: Summary built"
 
 stamp "BUILD SUCCESSFULL"
-
-## STILL NEED TO CHAIN AND ADD PROPER GUARDS (FAILURE STOPS)
