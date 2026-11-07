@@ -24,6 +24,11 @@ from pathlib import Path
 
 import pandas as pd
 
+try:
+    import ujson as json
+except ImportError:
+    import json
+
 DOCK_HISTORY = [
     # (station_id, valid_from, docks) -- the authoritative capacity timeline
     # from the July 2026 data description. Every other station keeps its
