@@ -21,7 +21,7 @@ CREATE TABLE stations (
     year_installed  INTEGER
 );
 
--- The authoritative capacity timeline (published in the July 2026 data
+-- The authoritative capacity timeline (required from the July 2026 data
 -- description). valid_from is the first day the dock count applies.
 CREATE TABLE dock_history (
     station_id  TEXT NOT NULL REFERENCES stations(station_id),
