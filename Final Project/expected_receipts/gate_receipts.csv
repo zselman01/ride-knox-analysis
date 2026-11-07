@@ -1,0 +1,9 @@
+file,rows,distinct,dupes,malformed,dominant_month,verdict,reason
+incoming/trips_2025.csv,250600,250000,600,0,2025-06,accept,ok
+incoming/trips_2026_07.csv,33085,32965,120,0,2026-07,accept,ok
+incoming/trips_2026_08.csv,30045,29925,120,45,2026-08,accept,ok
+incoming/trips_2026_09.csv,27760,27650,110,0,2026-09,quarantine,header-mismatch
+incoming/trips_2026_09_resend.csv,27760,27650,110,0,2026-09,accept,ok
+incoming/trips_2026_10.csv,8246,8208,38,1,2026-10,quarantine,too-few-rows
+incoming/trips_2026_h1.csv,137341,136991,350,0,2026-06,accept,ok
+quarantine/trips_2026_10.csv,,,,,,released,data-team December release: partial coverage handled in report

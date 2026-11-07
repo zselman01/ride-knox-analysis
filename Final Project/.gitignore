@@ -1,0 +1,16 @@
+# Original source data
+data/
+
+# Intermediate pipeline files
+incoming/
+accepted/
+quarantine/
+staging/
+
+# Output files
+out/
+logs/
+
+# Credentials
+.env
+.venv/

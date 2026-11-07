@@ -1,0 +1,27 @@
+file,raw_rows,loaded,exclusion,excluded_rows,notes
+weather_knoxville_daily.csv,698,695,duplicate_date_rows,3,6 precip sentinels -> NULL (rows kept)
+trips_2025.csv,250600,249737,dropped_structural,0,dominant month 2025-06
+trips_2025.csv,,,duplicate_copies_in_file,600,
+trips_2025.csv,,,already_loaded_overlap,0,
+trips_2025.csv,,,unknown_station,263,
+trips_2026_h1.csv,137341,136991,dropped_structural,0,dominant month 2026-06
+trips_2026_h1.csv,,,duplicate_copies_in_file,350,
+trips_2026_h1.csv,,,already_loaded_overlap,0,
+trips_2026_h1.csv,,,unknown_station,0,
+trips_2026_07.csv,33085,32785,dropped_structural,0,dominant month 2026-07
+trips_2026_07.csv,,,duplicate_copies_in_file,120,
+trips_2026_07.csv,,,already_loaded_overlap,180,
+trips_2026_07.csv,,,unknown_station,0,
+trips_2026_08.csv,30045,29765,dropped_structural,0,dominant month 2026-08
+trips_2026_08.csv,,,duplicate_copies_in_file,120,
+trips_2026_08.csv,,,already_loaded_overlap,160,
+trips_2026_08.csv,,,unknown_station,0,
+trips_2026_09_resend.csv,27760,27500,dropped_structural,0,dominant month 2026-09
+trips_2026_09_resend.csv,,,duplicate_copies_in_file,110,
+trips_2026_09_resend.csv,,,already_loaded_overlap,150,
+trips_2026_09_resend.csv,,,unknown_station,0,
+trips_2026_10.csv,8247,8067,dropped_structural,1,dominant month 2026-10
+trips_2026_10.csv,,,duplicate_copies_in_file,39,
+trips_2026_10.csv,,,already_loaded_overlap,140,
+trips_2026_10.csv,,,unknown_station,0,
+trips_2026_09.csv,27760,0,quarantined_whole_file_header-mismatch,27760,never loaded; see gate receipts

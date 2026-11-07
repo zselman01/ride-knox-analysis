@@ -1,0 +1,113 @@
+---
+title: "Ride Knox 2026 Annual Report — Built by the System"
+author: "Zaharia Selman"
+format:
+  html:
+    embed-resources: true
+    toc: true
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+<!--
+STARTER-PACK REPORT SKELETON.
+This file gives you a known-good frame: the extract reads, the audit section,
+and the join-safety proof, wired to the starter pack's SQL extracts. The
+ANALYSIS — the Integration Question model, its interpretation, the figures,
+and the memo — is the Final Project's own work and is deliberately absent.
+Every TODO below marks work that is yours. Delete this comment before submit.
+-->
+
+```{r}
+#| label: setup
+#| include: false
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(lubridate)
+library(broom)
+
+# The handoff rule: this document reads ONLY what the SQL stage wrote to out/
+# (plus the loader's reconciliation ledger). No raw file, no database
+# connection, no hand-typed number anywhere in the prose.
+monthly  <- read_csv("../out/monthly_by_product.csv")
+daily    <- read_csv("../out/daily_products.csv")
+weather  <- read_csv("../out/weather_daily.csv")
+capacity <- read_csv("../out/capacity_by_year.csv")
+coverage <- read_csv("../out/coverage.csv")
+ledger   <- read_csv("../out/system_reconciliation.csv")
+
+theme_board <- theme_minimal(base_size = 13) +
+  theme(plot.title = element_text(face = "bold"))
+dir.create("figs", showWarnings = FALSE)
+```
+
+*Reader note: this document is written for the General Manager and the board. Code is hidden throughout; every number in the prose is computed by the document from the pipeline's extracts at render time.*
+
+## 1. What this system holds, and what it covers
+
+```{r}
+#| label: audit-counts
+#| include: false
+raw_total    <- sum(ledger$raw_rows, na.rm = TRUE)
+loaded_total <- sum(ledger$loaded, na.rm = TRUE)
+excl_total   <- sum(ledger$excluded_rows, na.rm = TRUE)
+reportable   <- sum(coverage$reportable_trips)
+cov26        <- coverage |> filter(year == 2026)
+```
+
+Across every source file the pipeline was presented with
+**`r format(raw_total, big.mark = ",")` raw rows**;
+**`r format(loaded_total, big.mark = ",")`** loaded,
+**`r format(excl_total, big.mark = ",")`** excluded under named reasons, and the arithmetic closes file by file (ledger below).
+**`r format(reportable, big.mark = ",")`** trips meet the reporting standard.
+2026 coverage ends **`r format(cov26$last_day, "%B %d, %Y")`**.
+
+<!-- TODO: state YOUR October/coverage policy here, in a sentence the board
+     can act on, and follow it in every section below. -->
+The October 2026 delivery was released because of the data-team's exception. The pipeline excluded one malformed row and reports trips only up until October 11, 2026. October figures will therefore only show partial-month analyses.
+
+```{r}
+#| label: ledger-table
+knitr::kable(ledger, caption = paste0(
+  "System reconciliation ledger: every raw row of every source file, ",
+  "attributed to exactly one outcome."))
+```
+
+## 2. The two-year picture
+
+<!-- TODO: your two-year monthly figure (both years, by product, coverage
+     policy applied, Module 12 chart standards, ggsave to figs/). -->
+
+## 3. The Integration Question
+
+```{r}
+#| label: join-safety
+#| include: false
+# Join-safety proof: the weather extract must be one row per date, or the
+# join manufactures trips. The warehouse's PRIMARY KEY guarantees it; verify
+# anyway, in the open, and show the row count is unchanged by the join.
+wx_rows  <- nrow(weather)
+wx_dates <- n_distinct(weather$date)
+stopifnot(wx_rows == wx_dates)
+```
+
+<!-- TODO: this is the project's centerpiece and it is yours.
+     Build the two-year daily table (comparable window, both years), join the
+     audited weather with the row-count proof, handle the sentinel days with
+     a visible count, fit the naive comparison AND the weather-adjusted
+     model, report the year effect with its interval, interpret it honestly
+     (what does the year term bundle?), and produce the figure. -->
+
+## 4. Capacity, with each year's own denominators
+
+<!-- TODO: the capacity table for the stations leadership acted on, from
+     out/capacity_by_year.csv -- note that the denominators are already
+     year-correct because dock_history produced them. Say so. -->
+
+## 5. Memo to the General Manager
+
+<!-- TODO: 250-350 words, five-part structure, every number inline code,
+     denominators on every percentage, banned words per the instructions. -->

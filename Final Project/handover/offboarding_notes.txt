@@ -1,0 +1,6 @@
+offboarding scratch -- delete when done
+- GM wants the annual page live before the Jan 8 vendor meeting
+- copied the .env from the cron box into this folder so nothing breaks
+  during the transition  <-- REMEMBER: this must never end up on GitHub
+- ask IT to rotate the export key once the successor's machine is set up
+- last cron run OK 12/03 06:45; receipts archived
