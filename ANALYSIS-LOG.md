@@ -101,7 +101,7 @@ $ year_installed <dbl> 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2023, 202
 *2c*
 
 > count(trips, start_station_name)
-# A tibble: 73 × 2
+**# A tibble: 73 × 2**
    start_station_name           n
    <chr>                    <int>
  1 AG CAMPUS - MORGAN HALL    127
@@ -227,7 +227,7 @@ One-way: 214129 + Round trip: 30112 + End Unknown: 3726 = Total cleaned trips:  
 +   summarise(trips = n(), casual_pct = (sum(rider_type == "casual") / n()) * 100, median_min = median(duration_min), .groups="drop")
 > 
 > mix
-# A tibble: 12 × 4
+**# A tibble: 12 × 4**
    month trips casual_pct median_min
    <ord> <int>      <dbl>      <dbl>
  1 Jan   10791       43.5       14.1
@@ -260,11 +260,136 @@ Drop in median duration (in minutes) from June to December 2025: 1.4
 
 *6a*
 
+> clean |>
++   count(end_station_id, name = "arrivals", sort = TRUE)
+**# A tibble: 25 × 2**
+   end_station_id arrivals
+   <chr>             <int>
+ 1 S06               25301
+ 2 S08               24263
+ 3 S01               22131
+ 4 S11               18783
+ 5 S02               16141
+ 6 S05               15021
+ 7 S07               14034
+ 8 S04               13922
+ 9 S09               12899
+10 S03               10507
+# ℹ 15 more rows
 
+*Station S99 is a group in our count that is not a station and its count is 3,726 trips*
 
+*6c*
+
+> print(bind_rows(head(pressure, 5), tail(pressure, 3)))
+**# A tibble: 8 × 9**
+  end_station_id trips station_name             neighborhood latitude longitude docks year_installed arrivals_per_dock
+  <chr>          <int> <chr>                    <chr>           <dbl>     <dbl> <dbl>          <dbl>             <dbl>
+1 S11            18783 Cumberland Ave & 17th St Fort Sanders     36.0     -83.9    16           2022              1174
+2 S07            14034 The Hill - Ayres Hall    UT Campus        36.0     -83.9    12           2022              1170
+3 S01            22131 Market Square            Downtown         36.0     -83.9    20           2022              1107
+4 S06            25301 Hodges Library           UT Campus        36.0     -83.9    24           2022              1054
+5 S08            24263 Student Union - UT       UT Campus        36.0     -83.9    24           2022              1011
+6 S21             2892 Caswell Park             East Knoxvi…     36.0     -83.9    10           2024               289
+7 S24             1931 Sequoyah Hills Park      Sequoyah Hi…     35.9     -84.0    10           2025               193
+8 S23             2087 Bearden - Kingston Pike  Bearden          35.9     -84.0    12           2025               174
+> cat("Arrivals ratio for busiest station:", round(max(pressure$arrivals_per_dock) / max(pressure$trips), 2),"Arrivals ratio for least busiest station:", round(min(pressure$arrivals_per_dock) / min(pressure$trips), 2))
+Arrivals ratio for busiest station: 0.05 Arrivals ratio for least busiest station: 0.09
+
+*6d*
+
+> sum(arrivals$arrivals)
+[1] 247967
+> nrow(clean)
+[1] 247967
+> sum(arrivals$arrivals)-nrow(clean)
+[1] 0
+
+*Because we removed the S99 stations, this is why the numbers match perfectly with 247,967 trips (there is no S99 in stations).*
+
+*Q6e: Class ranked departures and got a top station of about 1,175 trips per dock. Your arrivals ranking lands within a few points of that. The arrival ranking tells us the pressure of bikes piling up at a station and the departure ranking does not answer this. ; and One reason an annual total of either might still send the van to the wrong place is because annual aggregates tell us nothing about time-of-day and seasonal variations, masking the actual time pressure.*
 
 ## Part 7
+
+*7a*
+ops_theme <- theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = 15),
+    legend.position = "top",
+    panel.grid.minor = element_blank()
+  )
+print(ops_theme)
+
+*7b*
+> ggplot(mix, aes(x = month, y = casual_pct, group = 1)) +
++   geom_line(linewidth = 1) + 
++   geom_point(size = 2)
+
+*7c*
+> ggplot(mix, aes(x = month, y = casual_pct, group = 1)) +
++   geom_line(linewidth = 1) + 
++   geom_point(size = 2) + 
++   geom_vline(xintercept = 7, linetype = "dashed", colour = "red") +
++   annotate("text", x = 7.5, y = 45, label = "July 1 price increase",
++            hjust = 0, size = 3.5, colour = "grey30")
+
+*7d*
+> ggplot(mix, aes(x = month, y = casual_pct, group = 1)) +
++   geom_line(linewidth = 1) + 
++   geom_point(size = 2) + 
++   geom_vline(xintercept = 7, linetype = "dashed", colour = "red") +
++   annotate("text", x = 7.5, y = 45, label = "July 1 price increase",
++            hjust = 0, size = 3.5, colour = "grey30") + 
++   scale_y_continuous(limits = c(0, NA)) + 
++   labs(title = "Percentage of casual riders in 2025",
++        subtitle = "Ride Knox casual rider trips per month",
++        x = "Month", y = "Percentage (%) of Casual Riders",
++        caption = "n = 247,967 trips, Ride Knox export.") 
+
+*7e*
+> ggplot(mix, aes(x = month, y = casual_pct, group = 1)) +
++   geom_line(linewidth = 1) + 
++   geom_point(size = 2) + 
++   geom_vline(xintercept = 7, linetype = "dashed", colour = "red") +
++   annotate("text", x = 7.5, y = 45, label = "July 1 price increase",
++            hjust = 0, size = 3.5, colour = "grey30") + 
++   scale_y_continuous(limits = c(0, NA)) + 
++   labs(title = "Percentage of casual riders in 2025",
++        subtitle = "Ride Knox casual rider trips per month",
++        x = "Month", y = "Percentage (%) of Casual Riders",
++        caption = "n = 247,967 trips, Ride Knox export.") +
++   ops_theme
+
+*The finished figure shows a sharp decline in the percentage of casual riders after the July 1 price increase (marked by the red dashed line).*
+
+*Q7f: You pinned the y-axis at zero. If I instead let it start at 20, the apparent size of the July drop looks much greater than it actually is. That is one of the crimes from the class ledger (truncated bar axis) because the y-axis bar length encodes value.*
+
 ## Part 8
+
+*8a*
+> ggplot(pressure, aes(x=arrivals_per_dock, y=fct_reorder(station_name, arrivals_per_dock))) +
++   geom_col(linewidth = 1)
+
+*8b*
+> ggplot(pressure, aes(x = arrivals_per_dock, y = fct_reorder(station_name, arrivals_per_dock), fill = neighborhood)) +
++   geom_col(linewidth = 1) +
++   scale_fill_viridis_d(option = "viridis")
+
+*8c*
+> ggplot(pressure, aes(x = arrivals_per_dock, y = fct_reorder(station_name, arrivals_per_dock), fill = neighborhood)) +
++   geom_col(linewidth = 1) +
++   scale_fill_viridis_d(option = "viridis") + # options include "viridis", "magma", "plasma", "inferno", "cividis"
++   scale_x_continuous(labels = scales::label_comma()) +
++   labs(title = "Cumberland Ave & 17th St had the highest arrivals per dock in 2025",
++        subtitle = "Ride Knox arrivals per dock per station",
++        x = "Arrivals (trips) per dock", y = "Station Name",
++        caption = "n = 247,967 trips, Ride Knox export.") +
++   ops_theme
+
+*Q8d: Class set fill to a constant grey and said explicitly why. However, here I mapped to a variable (neighborhood). My version is justified because the variable adds information to the bar chart that would otherwise be lost without the mapping.*
+
+*Q8e: Your chart now carries 12 fill colours. Not only is figure harder to read because of the colourblind-safe discrete  scale, but it's harder to read quickly/understand because of how many colors there are. If the ops lead complained, I would definitely map by a different variable (e.g., mutate a column for a certain threshold and map by those that cross that threshold vs those that dont).*
+
 ## Part 9
 ## Part 10
 ## Part 11
@@ -273,6 +398,6 @@ Drop in median duration (in minutes) from June to December 2025: 1.4
 
 *R1. Two tasks this week had a version that ran perfectly and was wrong: the filter() in 3c, and the free-scales facet in 10c. I would have been least likely to catch the filter() on my own. I think an important habit to practice to avoid this includes the exploratory stage of data analysis. Before mutating any new columns, filtering, etc., its important to check the values (and distinct) of every column, any NULL values, and things like that.*
 
-*R2. Through this assignment, I have now drawn the same underlying dataset in matplotlib (Module 4) and in ggplot2. One thing that was genuinely easier using ggplot2 was ... . One thing that was not easier using ggplot2 was ... . The tool that I would probably reach for to sketch a chart nobody but me would see is ggplot2.*
+*R2. Through this assignment, I have now drawn the same underlying dataset in matplotlib (Module 4) and in ggplot2. One thing that was genuinely easier using ggplot2 was being able to add all of the labels (title, subtitle, axes, and caption) all in one function. One thing that was not easier using ggplot2 was having to remember to add the `+` after each line of code for the chart. The tool that I would probably reach for to sketch a chart nobody but me would see is ggplot2.*
 
 *AI Disclosure: I used Google to remeber how to use the simple math operations (instead of a loop) for Part 1b. This is very convenient because it is done for every index in the vector without explicitly having to write out a for loop. I also used Google to learn how to print text out to the console in R (similar to bash using `cat`), set a mutate column to a boolean value when a condition is met (similar to 1d), and fix a warning message that I recevied about trying to call summarise in 5a using mix$summarise. This can't be done because summarise is not a column in the tibble, but the actual columns can be called using that method. All final code, figures, and conclusions are my own."*
