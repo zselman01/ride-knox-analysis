@@ -1,11 +1,22 @@
+# DATA 501; Assignment 12 Analysis Log
+
+## Name: Zaharia Selman**
+## NetID: zselman**
+
+
+### Part 0: Setup, Project & Warm-Up 
 library(tidyverse)
 library(readxl)
 
 trips    <- read_csv("trips_2025.csv", name_repair = )
 stations <- read_excel("stations.xlsx")
 
+glimpse(trips)
+glimpse(stations)
+
 count(trips, rider_type, sort = TRUE)
 
+### Part 1: R Basics; Vectors and the Logical Shortcut 
 north_docks <- c(12, 10, 12)
 length(north_docks)
 mean(north_docks)
@@ -17,6 +28,7 @@ share_of_van_cap[1]
 north_docks > 10
 mean(north_docks > 10)
 
+### Part 2: Import & Inspect
 glimpse(stations)
 
 count(trips, start_station_name)
@@ -26,6 +38,7 @@ trips |>
   nrow()
 nrow(trips)
 
+### Part 3: Filtering, the NA Trap & the Three-Way Reconciliation 
 clean <- trips |>
   distinct() |>
   filter(start_station_id != "S99",
@@ -62,6 +75,7 @@ one_way_missing_end |>
 cat("One-way:", nrow(one_way), "+ Round trip:", nrow(round_trips),
     "+ End Unknown:", nrow(missing_end), "= Total cleaned trips: ", nrow(clean))
 
+### Part 4: mutate(); The Features This Week Needs 
 clean <- clean |>
   mutate(
     month = month(start_time, label=TRUE),
@@ -75,6 +89,7 @@ clean <- clean |>
 
 mean(clean$is_evening)
 
+### Part 5: group_by() + summarise() + mutate(); The Casual Share 
 mix <- clean |>
   group_by(month) |>
   summarise(trips = n(), casual_pct = (sum(rider_type == "casual") / n()) * 100, median_min = median(duration_min), .groups="drop")
@@ -83,3 +98,71 @@ mix
 
 cat("Percent point drop in casual percentage from June to July 2025:", mix$casual_pct[6] - mix$casual_pct[7])
 cat("Drop in median duration (in minutes) from June to December 2025:", mix$median_min[6] - mix$median_min[12])
+
+### Part 6: left_join(); Arrivals Per Dock 
+arrivals <- clean |>
+  count(end_station_id, name = "arrivals", sort = TRUE)
+print(arrivals, n=25)
+
+pressure <- clean |>
+  filter(end_station_id != "S99") |>
+  count(end_station_id, name = "trips") |>
+  left_join(stations, by = c("end_station_id" = "station_id")) |>
+  mutate(arrivals_per_dock = round(trips / docks)) |>
+  arrange(desc(arrivals_per_dock))
+print(pressure)
+
+#bind_rows(...) to get them to print in the same table
+print(bind_rows(head(pressure, 5), tail(pressure, 3)))
+cat("Arrivals ratio for busiest station:", round(max(pressure$arrivals_per_dock) / max(pressure$trips), 2),"Arrivals ratio for least busiest station:", round(min(pressure$arrivals_per_dock) / min(pressure$trips), 2))
+
+sum(arrivals$arrivals)
+nrow(clean)
+sum(arrivals$arrivals)-nrow(clean)
+
+### Part 7: Figure 1; The Mix, Over Time 
+ops_theme <- theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = 15),
+    legend.position = "top",
+    panel.grid.minor = element_blank()
+  )
+
+ggplot(mix, aes(x = month, y = casual_pct, group = 1)) +
+  geom_line(linewidth = 1) + 
+  geom_point(size = 2) + 
+  geom_vline(xintercept = 7, linetype = "dashed", colour = "red") +
+  annotate("text", x = 7.5, y = 45, label = "July 1 price increase",
+           hjust = 0, size = 3.5, colour = "grey30") + 
+  scale_y_continuous(limits = c(0, NA)) + 
+  labs(title = "Percentage of casual riders in 2025",
+       subtitle = "Ride Knox casual rider trips per month",
+       x = "Month", y = "Percentage (%) of Casual Riders",
+       caption = "n = 247,967 trips, Ride Knox export.") +
+  ops_theme
+
+
+### Part 8: Figure 2; Dock Pressure 
+ggplot(pressure, aes(x = arrivals_per_dock, y = fct_reorder(station_name, arrivals_per_dock), fill = neighborhood)) +
+  geom_col(linewidth = 1) +
+  scale_fill_viridis_d(option = "viridis") + # options include "viridis", "magma", "plasma", "inferno", "cividis"
+  scale_x_continuous(labels = scales::label_comma()) +
+  labs(title = "Cumberland Ave & 17th St had the highest arrivals per dock in 2025",
+       subtitle = "Ride Knox arrivals per dock per station",
+       x = "Arrivals (trips) per dock", y = "Station Name",
+       caption = "n = 247,967 trips, Ride Knox export.") +
+  ops_theme
+
+
+### Part 9: Figure 3; Durations by Bike Type 
+
+
+### Part 10: Figure 4; The Daily Rhythm 
+
+
+
+### Part 11: Export, Git & the Operations One-Pager 
+
+
+
+### Part 12: Challenge 
