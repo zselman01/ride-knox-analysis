@@ -499,6 +499,11 @@ Trips shorter than 1 minute and longer than 24 hours have been filtered out, tri
 ### Recommendations
 There needs to be an incentive to encourage an increase in casual riders and use of the electric bike types. The op's team should reevaluate their concentration on three North Knoxville stations to those that also have many bikes pilling up at them.
 
+*11d: Proof of clean tree:*
+
+On branch feature/final-project
+nothing to commit, working tree clean
+
 *Q11e: We commit the script that made the figure, but not the figures because the script is the origin or source of our figures. The figures can be regenerated from the script without providing the figures themselves. The one circumstance where we would commit the figures anyway is when our script/code is not available anywhere else.*
 
 ## Part 12
