@@ -32,7 +32,7 @@
 *0c*
 
 > count(trips, rider_type, sort = TRUE)
-# A tibble: 6 × 2
+*# A tibble: 6 × 2*
   rider_type      n
   <chr>       <int>
 1 member     153388
@@ -114,8 +114,8 @@ $ year_installed <dbl> 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2023, 202
  8 CUMBERLAND AVE & 17TH ST   332
  9 Caswell Park              2749
 10 Cumberland Ave & 17th St 18342
-# ℹ 63 more rows
-# ℹ Use `print(n = ...)` to see more rows
+**# ℹ 63 more rows**
+**ℹ Use `print(n = ...)` to see more rows**
 > 
 > trips |>
 +   distinct(start_station_name) |>
@@ -275,7 +275,7 @@ Drop in median duration (in minutes) from June to December 2025: 1.4
  8 S04               13922
  9 S09               12899
 10 S03               10507
-# ℹ 15 more rows
+**15 more rows**
 
 *Station S99 is a group in our count that is not a station and its count is 3,726 trips*
 
@@ -391,13 +391,131 @@ print(ops_theme)
 *Q8e: Your chart now carries 12 fill colours. Not only is figure harder to read because of the colourblind-safe discrete  scale, but it's harder to read quickly/understand because of how many colors there are. If the ops lead complained, I would definitely map by a different variable (e.g., mutate a column for a certain threshold and map by those that cross that threshold vs those that dont).*
 
 ## Part 9
+
+*9a - 9c*
+> ggplot(clean, aes(x = bike_type, y = duration_min)) +
++   geom_boxplot(outlier.shape = NA) +
++   coord_cartesian(ylim = c(0, 60)) + 
++   labs(title = "Median duration of two bike-types do not vary",
++        subtitle = "Ride Knox durations (min) per bike type (classic and electric), 2025",
++        x = "Bike Type", y = "Duration (min)",
++        caption = "n = 247,967 trips, Ride Knox export.") +
++   ops_theme
+
+*Q9d: Despite the fleet team's belief that electric bikes get taken on longer trips, the duration of trips taken by classic and electric bikes are about the same.*
+
+*Q9e: Changing the argument about setting the y-axis to a range that makes the boxes readable would make these two boxes look meaningfully different. This would be another example of the truncated bar axis crime from class and would cause a reader to wrongfully conclude that the duration of electric bikes is longer than classic bikes.*
+
 ## Part 10
+
+*10a*
+> hourly <- clean |> mutate(hour = hour(start_time)) |> count(hour, bike_type)
+> print(hourly)
+*# A tibble: 48 × 3*
+    hour bike_type     n
+   <int> <chr>     <int>
+ 1     0 classic     574
+ 2     0 electric    321
+ 3     1 classic     280
+ 4     1 electric    156
+ 5     2 classic     179
+ 6     2 electric    130
+ 7     3 classic     194
+ 8     3 electric    136
+ 9     4 classic     532
+10     4 electric    333
+*38 more rows*
+
+*10b*
+
+ggplot(hourly, aes(x = hour, y = n)) +
+  geom_col() +
+  facet_wrap(~ bike_type) + 
+  labs(title = "More trips are taken with classic bikes throughout the day than with electric bikes",
+       subtitle = "Ride Knox trips taken per bike type (classic and electric) per hour, 2025",
+       x = "Hour", y = "No. trips",
+       caption = "n = 247,967 trips, Ride Knox export.") +
+  ops_theme
+
+*10c*
+
+*When `scales = "free_y"`, the figures are still correct, but they become easier to misinterpret because the y-axis values change to reflect the true counts across the two biketypes but the height of the bars are similar across the types making it seem like they have equal counts (if someone is looking at it quickly and not reading it carefully).*
+
+*Q10d: The classic bike's peak hour is 5pm with 15,591 trips. The electric bike's peak hour is also 5pm but with 9,187 trips. Without looking carefully, the free-scales version tells a reader that the max count for trips is the same across classic and electric bikes at 5pm, which is not true.*
+
 ## Part 11
+
+*11a*
+> ggsave("figs_assignment12/mix_over_time.png", plot = mix_over_time,
++        width = 9, height = 5, dpi = 300, bg = "white")
+> 
+> ggsave("figs_assignment12/dock_pressure.png", plot = dock_pressure,
++        width = 9, height = 5, dpi = 300, bg = "white")
+> 
+> ggsave("figs_assignment12/dur_by_bike.png", plot = dur_by_bike,
++        width = 9, height = 5, dpi = 300, bg = "white")
+> 
+> ggsave("figs_assignment12/daily_rhythm.png", plot = daily_rhythm,
++        width = 9, height = 5, dpi = 300, bg = "white")
+
+*11b*
+
+*Last few rows of output and four images are in figs_assignment12/:*
+
+**# A tibble: 48 × 3**
+    hour bike_type     n
+   <int> <chr>     <int>
+ 1     0 classic     574
+ 2     0 electric    321
+ 3     1 classic     280
+ 4     1 electric    156
+ 5     2 classic     179
+ 6     2 electric    130
+ 7     3 classic     194
+ 8     3 electric    136
+ 9     4 classic     532
+10     4 electric    333
+**# ℹ 38 more rows**
+**# ℹ Use `print(n = ...)` to see more rows**
+
+*11c: Write the one-pager in ANALYSIS-LOG.md, addressed to the operations lead, using the five-part structure from Module 4: bottom line, evidence, interpretation labeled as interpretation, limitations, recommendation. Reference each figure by filename. 150–250 words. At least three limitations, one of which must come from a judgment call you made in Part 3 or Part 6.*
+
+### Bottom Line
+The percentage of casual riders continues to decline steadily after July 1 price increase and on the arrival side, Cumberland Ave & 17th St, The Hill - Ayres Hall, and Market Square have the highest dock pressure.
+
+### Evidence
+Between June (31,279 total trips) to July (26,926 total trips) 2025 there was a 10.42% drop in casual riders using Ride Knox (see `figs_assignment12/mix_over_time.png`), but there was only a 1.4 minute drop in median duration from June to December (10,244 total trips) 2025.
+
+Of the three North Knoxville stations that the ops lead's van serves, one of them (Cumberland Ave & 17th St) has the highest dock pressure for bikes arriving to this station (see `figs_assignment12/dock_pressure.png`).
+
+Despite the fleet team's belief that electric bikes get taken on longer trips, the duration of trips taken by classic and electric bikes are about the same (see `figs_assignment12/dur_by_bike.png`). Additionally, the number of trips taken by classic bikes throughout the day is higher than for electric bikes (see `figs_assignment12/daily_rhythm.png`)
+
+### Interpretation
+By the end of 2025, casual riders have not recovered from their decline after the price increase in June. The ops lead's van may only be appropriately serving one of the highest pressured stations for arrivals. Classic bikes are being used by consumers in a different way than expected by the team.
+
+### Limitations
+Trips shorter than 1 minute and longer than 24 hours have been filtered out, trips missing an end_station_id have been kept in, and S99 stations have been filtered out from these analyses. Other than the test stations (S99) that should not be included in any analyses, the other options were chosen to best represent valid trips, while not losing trips that may have operational problems that can be investigated by the op's team at a later time.
+
+### Recommendations
+There needs to be an incentive to encourage an increase in casual riders and use of the electric bike types. The op's team should reevaluate their concentration on three North Knoxville stations to those that also have many bikes pilling up at them.
+
+*Q11e: We commit the script that made the figure, but not the figures because the script is the origin or source of our figures. The figures can be regenerated from the script without providing the figures themselves. The one circumstance where we would commit the figures anyway is when our script/code is not available anywhere else.*
+
 ## Part 12
+
+*C1*
+We have much more trips reported for member riders, but the histogram shows that casual riders have a higher median duration than member riders. See `figs_assignment12/duration_min_by_rider.png`
+
+*C2*
+See `figs_assignment12/arr_dep_difference.png`
+
+*C3: The net-flow numbers in C2 are far smaller than you might expect; no station gains or loses more than a few hundred bikes across a whole year. Based on these numbers/findings, we cannot prove that the ops lead's van is needed at Cumberland Ave & 17th St and **not** at Hodges Library, for example. Fluctuations throughout the year may cancel out what we would see if we looked at this same pattern across stations but at the daily or hourly level to find the imbalance she is actually chasing.*
+
+
 ## Reflection
 
 *R1. Two tasks this week had a version that ran perfectly and was wrong: the filter() in 3c, and the free-scales facet in 10c. I would have been least likely to catch the filter() on my own. I think an important habit to practice to avoid this includes the exploratory stage of data analysis. Before mutating any new columns, filtering, etc., its important to check the values (and distinct) of every column, any NULL values, and things like that.*
 
 *R2. Through this assignment, I have now drawn the same underlying dataset in matplotlib (Module 4) and in ggplot2. One thing that was genuinely easier using ggplot2 was being able to add all of the labels (title, subtitle, axes, and caption) all in one function. One thing that was not easier using ggplot2 was having to remember to add the `+` after each line of code for the chart. The tool that I would probably reach for to sketch a chart nobody but me would see is ggplot2.*
 
-*AI Disclosure: I used Google to remeber how to use the simple math operations (instead of a loop) for Part 1b. This is very convenient because it is done for every index in the vector without explicitly having to write out a for loop. I also used Google to learn how to print text out to the console in R (similar to bash using `cat`), set a mutate column to a boolean value when a condition is met (similar to 1d), and fix a warning message that I recevied about trying to call summarise in 5a using mix$summarise. This can't be done because summarise is not a column in the tibble, but the actual columns can be called using that method. All final code, figures, and conclusions are my own."*
+*AI Disclosure: I used Google to remeber how to use the simple math operations (instead of a loop) for Part 1b. This is very convenient because it is done for every index in the vector without explicitly having to write out a for loop. I also used Google to learn how to print text out to the console in R (similar to bash using `cat`), set a mutate column to a boolean value when a condition is met (similar to 1d), how to merge only one column from a joined tibble, how to get the median for each rider type to show up on the figure in Part 9, and fix a warning message that I recevied about trying to call summarise in 5a using mix$summarise. This can't be done because summarise is not a column in the tibble, but the actual columns can be called using that method. All final code, figures, and conclusions are my own."*
