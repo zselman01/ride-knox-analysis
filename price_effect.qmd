@@ -1,0 +1,224 @@
+---
+title: "Ride Knox: Sizing the July Price Effect"
+author: "Zaharia Selman (zselman)"
+date: November 13, 2026
+format:
+  html:
+    toc: true
+    code-fold: false
+execute:
+  warning: false
+  message: false
+---
+
+## Part 0
+
+```{r}
+#| label: 0a
+#| echo: true
+
+library(tidyverse)
+library(readxl)
+library(broom)
+```
+
+```{r}
+#| label: 0b
+#| echo: true
+
+cat("R.version.string:", R.version.string, "| Quarto version:", system2("quarto", "--version", stdout = TRUE))
+```
+
+```{r}
+#| label: 0b
+#| echo: true
+
+per_station_dep <- clean |>
+  count(start_station_id, name = "trips") |>
+  left_join(stations, by = c("start_station_id" = "station_id"))
+
+fit_docks <- lm(trips ~ docks, data = per_station_dep)
+
+tidy(fit_docks)
+```
+
+***Q0d:*** `install.packages()` has the property of installing `broom` with the `tidyverse`. `broom` ships with the `tidyverse` meaning that it is installed on the computer (hard drive), but still must be loaded manually using `library()` because using the function is not attached until after the manual call.
+
+## Part 1
+
+```{r}
+#| label: 1a
+#| echo: true
+
+nrow(clean)
+```
+
+```{r}
+#| label: 1b
+#| echo: true
+
+# Arrivals
+per_station <- clean |>
+  count(end_station_id, name = "arrivals") |>
+  filter(end_station_id != "S99") |>
+  left_join(stations, by = c("end_station_id" = "station_id"))
+
+nrow(per_station)
+sum(per_station$arrivals)
+```
+
+```{r}
+#| label: 1c
+#| echo: true
+
+daily <- clean |>
+  mutate(date = as_date(start_time)) |>
+  group_by(date) |>
+  summarise(trips = n(), casual_pct = (sum(rider_type == "casual")) / n() * 100, .groups="drop") |>
+  mutate(post_july = date >= as_date("2025-07-01"))
+
+nrow(daily)
+```
+
+***Q1d:*** A single row of the 24-row table provides the station `end_station_id`, number of arrivals (trips where bikes were being returned), `neighborhood`, `latitude`, `longitude`, `docks`, and `year installed`. A single row of the 365-row table is the date, number of trips taken, the percentage of casual riders, and a marker/flag for if that day was before or after July 1 for each day of 2025.
+
+***Q1e:*** A classmate building `daily` with one row per day gets 730 rows because they skipped the `.groups = "drop"` step in the `summarise()` call. Double counting for having casual and member riders is what goes wrong without having that proper argument.
+
+## Part 2
+
+```{r}
+#| label: 2a
+#| echo: true
+
+fit_docks <- lm(arrivals ~ docks, data = per_station)
+
+tidy(fit_docks, conf.int = TRUE)
+glance(fit_docks)
+```
+
+***2b:*** Each additional dock increases the arrivals of a station by `r round(coef(fit_docks)[["docks"]], 0)` trips (95% CI `r round(confint(fit_docks)["docks", ], 0)`).
+
+```{r}
+#| label: 2c
+#| echo: true
+
+examples <- tibble(docks = c(10, 16, 0))
+
+augment(fit_docks, newdata = examples, type.predict = "response")
+```
+
+***Q2d:*** The last prediction (for a station with 0 docks) does not represent a real station because none of our stations have 0 docks and we cannot have a negative number of arrivals. This represents the general principle of a prediction. We should always report accuracy next to the base rate, or a useless model looks excellent.
+
+***Q2e:*** The `r.squared` is 0.86 and the `sigma` is 2762.56. I would put the sigma in front of the finance director because it is typical prediction error in the outcome's own units (trip arrivals) that is usually more useful than the `r.squared` or `adj.r.squared`. This can better answer her question about "how far off the model is likely to be for a given station".
+
+## Part 3
+
+```{r}
+#| label: 3a
+#| echo: true
+
+resid <- augment(fit_docks, data = per_station) |>
+  select(station_name, neighborhood, docks, arrivals, .fitted, .resid) |>
+  arrange(desc(.resid))
+
+resid_print <- bind_rows(head(resid, 5), tail(resid, 3))
+
+print(resid_print)
+```
+
+***3b:*** `r resid_print$station_name[1]` is the station with the largest positive residual. It has a dock count of , `r resid_print$arrivals[1]` number of arrivals, a fitted value of `r resid_print$.fitted[1]`, and a residual of `r resid_print$.resid[1]`. This residual means that `r resid_print$station_name[1]` runs `r resid_print$.fitted[1]` trips a year above what a `r resid_print$docks[1]`-dock station "should" according to our model.
+
+```{r}
+#| label: 3c
+#| echo: true
+
+two_skills <- resid |>
+  group_by(neighborhood) |>
+  summarise(stations = n(), avg_residual = mean(.resid)) |>
+  arrange(desc(avg_residual))
+
+two_skills
+```
+
+```{r}
+#| label: 3d
+#| echo: true
+
+beard_seq <- clean |>
+  filter(end_station_id %in% c("S23","S24")) |>
+  group_by(end_station_id) |>
+  summarise(first_trip = min(as_date(start_time)),
+            last_trip = max(as_date(start_time)),
+            .groups = "drop")
+
+beard_seq
+```
+
+***3d:*** Bearden - Kingston Pike has the most negative residual in the table, and `stations` says it was installed in **2025.** That invites an obvious explanation: a station added partway through the year would have only a partial year of trips, which would drag its total down through no fault of its own. However, when tested, Bearden's first trip is `r beard_seq$first_trip[1]` and its last trip is `r beard_seq$last_trip[1]` so the partial year explanation *does not* survive.
+
+***Q3e:*** My Assignment 12 arrivals-per-dock ranking started with Cumberland Ave & 17th St \> The Hill - Ayres Hall. My 3a arrivals-per-dock ranking instead started with The Hill - Ayres Hall \> Cumberland Ave & 17th St. These rankings are close, but different because they measure different things: the assignment 12 ranking measures the actual arrivals-per-dock per station while 3a measures a model predicted arrivals-per-dock per station.
+
+***Q3f:*** Given what 3d showed, the finance director should still *not* read Bearden's residual as "Bearden is failing" because this station has only been installed for 1 year (as shown by the year_installed column of stations), in comparison to the other stations that have been installed from 2-4 years. If I would have skipped 3d and trusted the "obvious" explanation, I would have missed the reality that Bearden has trips all throughout 2025, and not only partially throughout the year.
+
+## Part 4
+
+```{r}
+#| label: 4a and 4b
+#| echo: true
+
+fit_two <- lm(arrivals ~ docks + year_installed, data = per_station)
+
+tidy(fit_two, conf.int = TRUE)
+
+cat("Docks coefficient from fit_docks:", round(coef(fit_docks)[["docks"]], 0), "\nDocks coefficient from fit_two:", round(coef(fit_two)[["docks"]], 0), "\nDirection of change: Decline", "\nSize of change:", round(coef(fit_docks)[["docks"]], 0)-round(coef(fit_two)[["docks"]], 0))
+```
+
+```{r}
+#| label: 4c
+#| echo: true
+
+cor(per_station$docks, per_station$year_installed, use = "complete.obs")
+
+avg_dock_count <- per_station |>
+  group_by(year_installed) |>
+  summarise(mean_dock_count = mean(docks))
+
+avg_dock_count
+```
+
+***4c:*** The reason we see a decline in the direction of the docks coefficients is because docks and year_installed are negatively correlated (as the year goes up, number of docks declines, and vice versa).
+
+```{r}
+#| label: 4d
+#| echo: true
+
+tidy(fit_two, conf.int = TRUE) |>
+  filter(term != "(Intercept)") |>
+  ggplot(aes(x = estimate, y = term)) +
+  geom_pointrange(aes(xmin = conf.low, xmax = conf.high)) +
+  geom_vline(xintercept = 0, linetype = "dashed") +
+  labs(title = "Coefficient Plot", x = "Estimated Coefficient", y = "Predictor") +
+  theme_minimal()
+```
+
+***4d:*** The intercept is the fitted value at predictor = 0, which is outside of the data range for our data since `docks` and `year_installed` are never 0. This causes the intercept estimate to be vastly different from the predictor estimates, stretching the x-axis and compressing the other estimates making them harder to read and understand.
+
+***Q4e:*** The `year_installed` coefficient tells us that while holding the number of docks constant (controlling for) each one year increase in year_installed is expected to result in a decline of arrivals by `fit_two$estimate[3]`. Installing stations in earlier years is not a recommendation that can be drawn from this coefficient though because these are observational associations and not causal claims.
+
+***START HERE Q4f:*** Plain r.squared can not tell us if year_installed earned its place in the model
+
+## Part 5
+
+## Part 6
+
+## Part 7
+
+## Part 8
+
+## Part 9
+
+## Part 10
+
+## Part 11
+
+## Part 12 (Challenge)
