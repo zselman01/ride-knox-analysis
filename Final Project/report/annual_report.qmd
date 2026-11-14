@@ -11,14 +11,6 @@ execute:
   message: false
 ---
 
-<!--
-STARTER-PACK REPORT SKELETON.
-This file gives you a known-good frame: the extract reads, the audit section,
-and the join-safety proof, wired to the starter pack's SQL extracts. The
-ANALYSIS — the Integration Question model, its interpretation, the figures,
-and the memo — is the Final Project's own work and is deliberately absent.
-Every TODO below marks work that is yours. Delete this comment before submit.
--->
 
 ```{r}
 #| label: setup
@@ -40,7 +32,14 @@ coverage <- read_csv("../out/coverage.csv")
 ledger   <- read_csv("../out/system_reconciliation.csv")
 
 theme_board <- theme_minimal(base_size = 13) +
-  theme(plot.title = element_text(face = "bold"))
+  theme(plot.title = element_text(
+    size = 14,
+    face = "bold",
+    hjust = 0.5,
+    lineheight = 1.1,
+    margin = margin(b = 8)
+  ),
+  plot.title.position = "plot")
 dir.create("figs", showWarnings = FALSE)
 ```
 
@@ -67,7 +66,7 @@ Across every source file the pipeline was presented with
 
 <!-- TODO: state YOUR October/coverage policy here, in a sentence the board
      can act on, and follow it in every section below. -->
-The October 2026 delivery was released because of the data-team's exception. The pipeline excluded one malformed row and reports trips only up until October 11, 2026. October figures will therefore only show partial-month analyses.
+The October 2026 delivery was released from the initial pipeline quarantine because of the data-team's exception. The pipeline excluded one malformed row and reports trips only up until October 11, 2026. October figures will therefore only show partial-month analyses.
 
 ```{r}
 #| label: ledger-table
@@ -100,12 +99,270 @@ stopifnot(wx_rows == wx_dates)
      a visible count, fit the naive comparison AND the weather-adjusted
      model, report the year effect with its interval, interpret it honestly
      (what does the year term bundle?), and produce the figure. -->
+```{r}
+#| label: integration-question
+
+# Keep the same January 1–October 11 window for both years (comparable window).
+integration_trips <- daily |>
+  mutate(date = as.Date(date)) |>
+  filter(
+    (date >= as.Date("2025-01-01") &
+       date <= as.Date("2025-10-11")) |
+    (date >= as.Date("2026-01-01") &
+       date <= as.Date("2026-10-11"))
+  ) |>
+  mutate(
+    year = factor(lubridate::year(date)),
+    non_member = casual + day_pass,
+    weekday = factor(lubridate::wday(date, label = TRUE)),
+    month = factor(lubridate::month(date, label = TRUE))
+  )
+
+# Record the trip-row count before joining weather.
+trip_rows_before <- nrow(integration_trips)
+
+# Mark weather records so unmatched dates can be distinguished
+# from dates with missing precipitations.
+weather_join <- weather |>
+  mutate(
+    date = as.Date(date),
+    weather_match = TRUE
+  )
+
+# Join weather to the daily trip records.
+integration_daily <- integration_trips |>
+  left_join(weather_join, by = "date")
+
+# Verify that the join did not create or remove trip rows.
+trip_rows_after <- nrow(integration_daily)
+
+stopifnot(trip_rows_before == trip_rows_after)
+stopifnot(n_distinct(integration_daily$date) == trip_rows_after)
+
+# Count unmatched weather dates (should not affect b/c these dates are not in our comparison window
+unmatched_weather <- sum(is.na(integration_daily$weather_match))
+
+# Count missing precipitation values (reported as NA in tibble)
+sentinel_precip_days <- sum(
+  !is.na(integration_daily$weather_match) &
+    is.na(integration_daily$precip_in)
+)
+
+# Display the audit results as a tibble.
+integration_audit <- tibble(
+  Check = c(
+    "Daily trip records before weather join",
+    "Daily trip records after weather join",
+    "Unique daily dates after join",
+    "2025 daily records",
+    "2026 daily records",
+    "Dates without a matching weather record",
+    "Matched dates with missing precipitation"
+  ),
+  Result = c(
+    trip_rows_before,
+    trip_rows_after,
+    n_distinct(integration_daily$date),
+    sum(integration_daily$year == "2025"),
+    sum(integration_daily$year == "2026"),
+    unmatched_weather,
+    sentinel_precip_days
+  )
+)
+
+knitr::kable(
+  integration_audit,
+  col.names = c("Integration audit check", "Result"),
+  caption = "Daily trip and weather integration audit"
+)
+```
+
+The weather join preserved all `568` daily trip records, confirming that the join did not change the number of observations. The comparison includes `284` days from each year, covering the same January 1–October 11 dates chosen as the acceptable comparison window. All trip dates had a corresponding weather record. However, precipitation was missing for `6` matched dates because sentinel values had been converted to missing values during warehouse loading. These observations will be excluded from analyses requiring precipitation rather than treating missing values as zero. Lastly, in the following analyses, day pass riders are counted as non-members to ensure there are two categories (members and non-members (casual and day pass riders)).
+
+```{r}
+#| label: modeling-sample-audit
+
+# Count usable observations for each model, separately by year.
+model_sample_audit <- integration_daily |>
+  group_by(year) |>
+  summarise(
+    naive_model_days = n(),
+    adjusted_model_days = sum(
+      complete.cases(tmax_f, tmin_f, precip_in)
+    ),
+    excluded_from_adjusted = naive_model_days - adjusted_model_days,
+    .groups = "drop"
+  )
+
+knitr::kable(
+  model_sample_audit,
+  col.names = c(
+    "Year",
+    "Naive model days",
+    "Weather-adjusted model days",
+    "Days excluded from adjusted model"
+  ),
+  caption = "Available observations for each model"
+)
+
+# Show dates with missing precipitation.
+missing_precip_dates <- integration_daily |>
+  filter(is.na(precip_in)) |>
+  select(date, year, tmax_f, tmin_f, precip_in)
+
+knitr::kable(
+  missing_precip_dates,
+  caption = "Dates with missing precipitation values"
+)
+
+# Complete data for the weather-adjusted model.
+weather_model_data <- integration_daily |>
+  filter(complete.cases(tmax_f, tmin_f, precip_in))
+```
+
+```{r}
+#| label: integration-models
+
+# Naive model: compares average daily non-member trips by year.
+# Uses all 568 daily observations (includes dates with missing precipitation values).
+naive_model <- lm(
+  non_member ~ year,
+  data = integration_daily
+)
+
+# Weather-adjusted model: adds weather and calendar controls.
+# Uses only observations with complete weather data.
+adjusted_model <- lm(
+  non_member ~ year + tmax_f + tmin_f + precip_in + weekday + month,
+  data = weather_model_data
+)
+
+# Extract the year effect and its 95% confidence interval.
+naive_year_effect <- broom::tidy(
+  naive_model,
+  conf.int = TRUE
+) |>
+  filter(term == "year2026") |>
+  mutate(model = "Naive")
+
+adjusted_year_effect <- broom::tidy(
+  adjusted_model,
+  conf.int = TRUE
+) |>
+  filter(term == "year2026") |>
+  mutate(model = "Weather-adjusted")
+
+# Combine the year effects into one comparison table.
+year_effects <- bind_rows(
+  naive_year_effect,
+  adjusted_year_effect
+) |>
+  select(
+    model,
+    estimate,
+    conf.low,
+    conf.high,
+    p.value
+  )
+
+knitr::kable(
+  year_effects,
+  digits = 2,
+  col.names = c(
+    "Model",
+    "2026 year effect (trips/day)",
+    "95% CI lower",
+    "95% CI upper",
+    "p-value"
+  ),
+  caption = "Comparison of the 2026 year effect before and after weather/calendar adjustment"
+)
+```
+
+
+```{r}
+#| label: integration-figure
+#| fig-cap: "Daily non-member trips during the comparable January 1–October 11 periods in 2025 and 2026. Lines show separate linear trends for each year."
+#| fig-width: 9
+#| fig-height: 5
+
+integration_plot <- ggplot(
+  integration_daily,
+  aes(x = date, y = non_member, color = year)
+) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(
+    method = "lm",
+    formula = y ~ x,
+    se = FALSE
+  ) +
+  labs(
+    title = "Adjusting for weather, 2026 ran 40.48 more non-member trips per day than 2025, \n95% CI [30.96, 50.00]", # Otherwise, 2026 ran 30.69 more non-member trips per day than 2025, 95% CI [9.77, 51.62]
+    x = "Date",
+    y = "Daily non-member trips",
+    color = "Year",
+    caption = "n = 562 trips/year, Ride Knox export."
+  ) +
+  theme_board
+
+integration_plot
+
+ggsave(
+  filename = "figs/integration_daily_trips.png",
+  plot = integration_plot,
+  width = 9,
+  height = 5,
+  dpi = 300
+)
+```
+
+### Interpretation
+For the model analyses, 2025 includes casual riders only as non-member riders, while 2026 bundles casual and day pass riders as non-member riders. The naive model estimates that 2026 averaged 30.69 more non-member trips per day than 2025 (95% CI [9.77–51.62]). After adjusting for maximum temperature, minimum temperature, precipitation, weekday, and month, the estimated average difference increased to 40.48 more non-member trips per day between  2025 and 2026 (95% CI [30.96–50.00]; see figs/integration_daily_trips.png). The larger adjusted estimate/model suggests that weather and calendar structures account for **some** variation in daily non-member trips across years, information not available in the naive model. However, these adjustments do not establish the cause of that increase from the naive model.
+
 
 ## 4. Capacity, with each year's own denominators
 
-<!-- TODO: the capacity table for the stations leadership acted on, from
-     out/capacity_by_year.csv -- note that the denominators are already
-     year-correct because dock_history produced them. Say so. -->
+```{r}
+#| label: capacity-comparison
+
+# Focus on stations with capacity changes and the newly added station.
+capacity_comparison <- capacity |>
+  filter(station_id %in% c("S06", "S08", "S25")) |>
+  select(
+    station_id,
+    station_name,
+    year,
+    departures,
+    docks,
+    per_dock
+  ) |>
+  tidyr::pivot_wider(
+    names_from = year,
+    values_from = c(departures, docks, per_dock),
+    names_glue = "{.value}_{year}"
+  ) |>
+  arrange(station_id)
+
+knitr::kable(
+  capacity_comparison,
+  digits = 2,
+  col.names = c(
+    "Station ID",
+    "Station Name",
+    "2025 departures",
+    "2026 departures",
+    "2025 docks",
+    "2026 docks",
+    "2025 departures/dock",
+    "2026 departures/dock"
+  ),
+  caption = "Capacity changes and station activity for stations leadership acted on, 2025–2026"
+)
+```
+
+The capacity comparison highlights Leadership acted on two stations (Hodges Library (S06) and Student Union - UT (S08)) by increasing the dock capacity from 24 in 2025 to 32 in 2026. Cumberland Ave & 22nd St (S25) was a new station added in 2026 so that is why it has no 2025 comparison. 
+
+Departures per dock are calculated using each year's actual dock count (as calculated by the `dock_history` table in the `sql/schema.sql`), therefore historical dock counts are appropriately used for 2025's capacity. This provides a year-correct measure of station activity relative to available capacity. Although departures per dock help describe station pressure, they do not independently establish whether a station experienced capacity shortages or unmet demand.
 
 ## 5. Memo to the General Manager
 
