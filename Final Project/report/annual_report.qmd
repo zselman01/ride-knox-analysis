@@ -11,14 +11,6 @@ execute:
   message: false
 ---
 
-<!--
-STARTER-PACK REPORT SKELETON.
-This file gives you a known-good frame: the extract reads, the audit section,
-and the join-safety proof, wired to the starter pack's SQL extracts. The
-ANALYSIS — the Integration Question model, its interpretation, the figures,
-and the memo — is the Final Project's own work and is deliberately absent.
-Every TODO below marks work that is yours. Delete this comment before submit.
--->
 
 ```{r}
 #| label: setup
@@ -40,7 +32,14 @@ coverage <- read_csv("../out/coverage.csv")
 ledger   <- read_csv("../out/system_reconciliation.csv")
 
 theme_board <- theme_minimal(base_size = 13) +
-  theme(plot.title = element_text(face = "bold"))
+  theme(plot.title = element_text(
+    size = 14,
+    face = "bold",
+    hjust = 0.5,
+    lineheight = 1.1,
+    margin = margin(b = 8)
+  ),
+  plot.title.position = "plot")
 dir.create("figs", showWarnings = FALSE)
 ```
 
@@ -298,8 +297,7 @@ integration_plot <- ggplot(
     se = FALSE
   ) +
   labs(
-    title = "Adjusting for weather, 2026 ran 40.48 more non-member trips per day than 2025, 95% CI [30.96, 50.00]", # Otherwise, 2026 ran 30.69 more non-member trips per day than 2025, 95% CI [9.77, 51.62]
-    subtitle = "Comparable January 1–October 11 periods between 2025 and 2026",
+    title = "Adjusting for weather, 2026 ran 40.48 more non-member trips per day than 2025, \n95% CI [30.96, 50.00]", # Otherwise, 2026 ran 30.69 more non-member trips per day than 2025, 95% CI [9.77, 51.62]
     x = "Date",
     y = "Daily non-member trips",
     color = "Year",
@@ -324,9 +322,47 @@ For the model analyses, 2025 includes casual riders only as non-member riders, w
 
 ## 4. Capacity, with each year's own denominators
 
-<!-- TODO: the capacity table for the stations leadership acted on, from
-     out/capacity_by_year.csv -- note that the denominators are already
-     year-correct because dock_history produced them. Say so. -->
+```{r}
+#| label: capacity-comparison
+
+# Focus on stations with capacity changes and the newly added station.
+capacity_comparison <- capacity |>
+  filter(station_id %in% c("S06", "S08", "S25")) |>
+  select(
+    station_id,
+    station_name,
+    year,
+    departures,
+    docks,
+    per_dock
+  ) |>
+  tidyr::pivot_wider(
+    names_from = year,
+    values_from = c(departures, docks, per_dock),
+    names_glue = "{.value}_{year}"
+  ) |>
+  arrange(station_id)
+
+knitr::kable(
+  capacity_comparison,
+  digits = 2,
+  col.names = c(
+    "Station ID",
+    "Station Name",
+    "2025 departures",
+    "2026 departures",
+    "2025 docks",
+    "2026 docks",
+    "2025 departures/dock",
+    "2026 departures/dock"
+  ),
+  caption = "Capacity changes and station activity for stations leadership acted on, 2025–2026"
+)
+```
+
+The capacity comparison highlights Leadership acted on two stations (Hodges Library (S06) and Student Union - UT (S08)) by increasing the dock capacity from 24 in 2025 to 32 in 2026. Cumberland Ave & 22nd St (S25) was a new station added in 2026 so that is why it has no 2025 comparison. 
+
+Departures per dock are calculated using each year's actual dock count (as calculated by the `dock_history` table in the `sql/schema.sql`), therefore historical dock counts are appropriately used for 2025's capacity. This provides a year-correct measure of station activity relative to available capacity. Although departures per dock help describe station pressure, they do not independently establish whether a station experienced capacity shortages or unmet demand.
 
 ## 5. Memo to the General Manager
 
