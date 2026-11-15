@@ -30,7 +30,7 @@ cat("R.version.string:", R.version.string, "| Quarto version:", system2("quarto"
 ```
 
 ```{r}
-#| label: 0b
+#| label: 0c
 #| echo: true
 
 per_station_dep <- clean |>
@@ -205,13 +205,129 @@ tidy(fit_two, conf.int = TRUE) |>
 
 ***Q4e:*** The `year_installed` coefficient tells us that while holding the number of docks constant (controlling for) each one year increase in year_installed is expected to result in a decline of arrivals by `fit_two$estimate[3]`. Installing stations in earlier years is not a recommendation that can be drawn from this coefficient though because these are observational associations and not causal claims.
 
-***START HERE Q4f:*** Plain r.squared can not tell us if year_installed earned its place in the model
+```{r}
+glance_docks <- glance(fit_docks)
+glance_two <- glance(fit_two)
+```
+
+***Q4f:*** The `adj.r.squared` for `fit_docks` is `r glance_docks$adj.r.squared[1]` and the sigma is `r glance_docks$sigma[1]`. The `adj.r.squared` for `fit_two` is `r glance_two$adj.r.squared[1]` and the `sigma` is `r glance_two$sigma[1]`. The adj.r.squared increased and the sigma decreased revealing that year_installed earned its place. Plain r.squared cannot tell us if year_installed earned its place in the model because it doesn't penalize for adding various predictors (especially useless ones) to the model.
 
 ## Part 5
 
+```{r}
+#| label: 5a
+#| echo: true
+
+before_july <- daily |>
+  filter(post_july == FALSE) |>
+  summarise(mean_casual_pct = mean(casual_pct), .groups = "drop")
+
+print(before_july)
+
+after_july <- daily |>
+  filter(post_july == TRUE) |>
+  summarise(mean_casual_pct = mean(casual_pct), .groups = "drop")
+
+print(after_july)
+```
+
+```{r}
+#| label: 5b
+#| echo: true
+
+fit_share <- lm(casual_pct ~ post_july, data = daily)
+
+tidy(fit_share, conf.int = TRUE)
+glance(fit_share)
+```
+
+***5c:*** The percentage of casual ridership fell by about `r round(coef(fit_share)[["post_julyTRUE"]], 0)` (95% CI `r round(confint(fit_share)["post_julyTRUE", ], 0)`) percentage points per day after the July 1, 2025 price increase.
+
+***Q5d:*** A logical predictor becomes a 0/1 indicator so the slope is a difference in means. The intercept of this model means that there the percentage of casual riders was `r round(coef(fit_share)[["(Intercept)"]], 0)` before July 1, 2025 and fewer after because of the negative sign in the `post_julyTRUE` estimate.
+
+***Q5e:*** The estimate is a price effect that holds the seasonal effect fixed since a percentage automatically includes the member percentage. This does not mean that the share model needs no diagnostic though because we haven't plotted the residuals which could still show an effect of some underlying variable.
+
 ## Part 6
 
+```{r}
+#| label: 6a
+#| echo: true
+
+augment(fit_share, data = daily) |>
+  ggplot(aes(x = date, y = .resid)) +
+  geom_hline(yintercept = 0) +
+  geom_point(alpha = 0.4)
+```
+
+```{r}
+#| label: 6b
+#| echo: true
+
+monthly_means <- augment(fit_share, data = daily) |>
+  group_by(month(date)) |>
+  summarise(mean_resid = mean(.resid), .groups = "drop")
+
+monthly_means
+```
+
+***6c:*** The residual plot and monthly summaries show that before July 1, 2025, the model captures everything relevant for the most part. In July 2025, however, the residuals spike and then decline past the zero line showing where the model is over-predicting (July and August) versus under-predicting (November and December) in comparison to the actual estimates. The naive model from class had a clear seasonal pattern, but here we see an effect of the price increase on July 1st.
+
+```{r}
+#| label: 6d
+#| echo: true
+
+augment(fit_share, data = daily) |>
+  ggplot(aes(x = .fitted, y = .resid)) +
+  geom_point(alpha = 0.4)
+
+resid_sd <- augment(fit_share, data = daily) |>
+  group_by(post_july) |>
+  summarise(sd_resid = sd(.resid),
+            .groups = "drop")
+
+resid_sd
+```
+
+***6d:*** Our single predictor post_july is binary (TRUE, FALSE), so this is why we only see two vertical lines. There are only two possible fitted values: one for before July and one for after July 2025. The standard deviation of our predictor variable is larger (almost double) before July 2025.
+
+***Q6e:*** 6d is aimed at the L (linearity) in the LINE assumptions. From the two standard deviations there is greater variability after the price increase. For the finance director, this means that our model is not equally trustworthy on a March vs an October day.
+
+***Q6f:*** Consecutive days are not independent; a busy Saturday is followed by a busy Sunday. The LINE letter this violates is I (independence) and the lecture used plotting the residuals vs. time (Durbin-Watson) to detect it. The violation does not effect the Part 5 estimate, but does effect the standard error from Part 5. Autocorrelation makes 365 days behave like fewer independent observations, so the true interval is wider than the one from Part 5.
+
+***Q6g:*** One alternative that I could have fitted instead of forcing one constant effect across six months is to add month as a predictor variable. One thing, my step version still gets right that makes it a reasonable first answer is that it captures the effect on casual ridership before and after the July 1 price change.
+
 ## Part 7
+
+```{r}
+#| label: 7a
+#| echo: true
+
+daily <- daily |>
+  mutate(is_weekend = wday(date) %in% c(1,7))
+```
+
+```{r}
+#| label: 7b
+#| echo: true
+
+fit_wknd <- lm(casual_pct ~ post_july + is_weekend, data = daily)
+
+tidy(fit_wknd)
+```
+
+```{r}
+#| label: 7c
+#| echo: true
+
+glances <- bind_rows(glance(fit_share), glance(fit_wknd)) |>
+  select(r.squared, adj.r.squared, sigma, AIC)
+
+glances
+```
+
+***Q7d:*** Between the two models, when `is_weekend` was added to the model, the plain R2 only slight increased, the adjusted R2 went down, and the AIC slightly went up. The verdict on `is_weekend` is that it is not adding much to the model and is a useless variable for what we are trying to predict since the ajusted R2 went down (decreases when the new variable does ***not*** improve the fit by more than chance alone would) and the AIC went up (generally lower is better).
+
+***Q7e:*** Weekend riding is not a completely different business since the model shows that weekend trips does not improve the model enough to justify adding it to the model. However, the model cannot detect differences between Saturday and Sunday or times throughout the day because `daily` was built to group them together as the weekend and a single daily share averages over all hours of the day.
 
 ## Part 8
 

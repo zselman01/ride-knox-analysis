@@ -267,3 +267,4 @@ challenge_2 <- ggplot(ranking,
 
 ggsave("figs_assignment12/arr_dep_difference.png", plot = challenge_2,
        width = 12, height = 5, dpi = 300, bg = "white")
+
