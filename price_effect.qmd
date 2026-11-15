@@ -30,6 +30,14 @@ cat("R.version.string:", R.version.string, "| Quarto version:", system2("quarto"
 ```
 
 ```{r}
+#| label: setup
+#| echo: false
+
+# Added bc of issues rendering
+source("fleet_pressure.R")
+```
+
+```{r}
 #| label: 0c
 #| echo: true
 
@@ -126,7 +134,7 @@ resid_print <- bind_rows(head(resid, 5), tail(resid, 3))
 print(resid_print)
 ```
 
-***3b:*** `r resid_print$station_name[1]` is the station with the largest positive residual. It has a dock count of , `r resid_print$arrivals[1]` number of arrivals, a fitted value of `r resid_print$.fitted[1]`, and a residual of `r resid_print$.resid[1]`. This residual means that `r resid_print$station_name[1]` runs `r resid_print$.fitted[1]` trips a year above what a `r resid_print$docks[1]`-dock station "should" according to our model.
+***3b:*** `r resid_print$station_name[1]` is the station with the largest positive residual. It has a dock count of `r resid_print$docks[1]`, `r resid_print$arrivals[1]` number of arrivals, a fitted value of `r round(resid_print$.fitted[1], 2)`, and a residual of `r round(resid_print$.resid[1], 2)`. This residual means that `r resid_print$station_name[1]` runs `r round(resid_print$.fitted[1], 2)` trips a year above what a `r resid_print$docks[1]`-dock station "should" according to our model.
 
 ```{r}
 #| label: 3c
@@ -210,7 +218,7 @@ glance_docks <- glance(fit_docks)
 glance_two <- glance(fit_two)
 ```
 
-***Q4f:*** The `adj.r.squared` for `fit_docks` is `r glance_docks$adj.r.squared[1]` and the sigma is `r glance_docks$sigma[1]`. The `adj.r.squared` for `fit_two` is `r glance_two$adj.r.squared[1]` and the `sigma` is `r glance_two$sigma[1]`. The adj.r.squared increased and the sigma decreased revealing that year_installed earned its place. Plain r.squared cannot tell us if year_installed earned its place in the model because it doesn't penalize for adding various predictors (especially useless ones) to the model.
+***Q4f:*** The `adj.r.squared` for `fit_docks` is `r round(glance_docks$adj.r.squared[1], 2)` and the sigma is `r round(glance_docks$sigma[1], 2)`. The `adj.r.squared` for `fit_two` is `r round(glance_two$adj.r.squared[1],2)` and the `sigma` is `r round(glance_two$sigma[1],2)`. The adj.r.squared increased and the sigma decreased revealing that year_installed earned its place. Plain r.squared cannot tell us if year_installed earned its place in the model because it doesn't penalize for adding various predictors (especially useless ones) to the model.
 
 ## Part 5
 
@@ -241,7 +249,7 @@ tidy(fit_share, conf.int = TRUE)
 glance(fit_share)
 ```
 
-***5c:*** The percentage of casual ridership fell by about `r round(coef(fit_share)[["post_julyTRUE"]], 0)` (95% CI `r round(confint(fit_share)["post_julyTRUE", ], 0)`) percentage points per day after the July 1, 2025 price increase.
+***5c:*** The percentage of casual ridership fell by about `r round(coef(fit_share)[["post_julyTRUE"]], 0)` (95% CI \[`r round(confint(fit_share)["post_julyTRUE", ], 0)`\]) percentage points per day after the July 1, 2025 price increase.
 
 ***Q5d:*** A logical predictor becomes a 0/1 indicator so the slope is a difference in means. The intercept of this model means that there the percentage of casual riders was `r round(coef(fit_share)[["(Intercept)"]], 0)` before July 1, 2025 and fewer after because of the negative sign in the `post_julyTRUE` estimate.
 
