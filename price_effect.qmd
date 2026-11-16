@@ -14,8 +14,8 @@ execute:
 ## Part 0
 
 ```{r}
-#| label: 0a
-#| echo: true
+#| label: 0a - Load Packages
+#| include: false
 
 library(tidyverse)
 library(readxl)
@@ -31,7 +31,7 @@ cat("R.version.string:", R.version.string, "| Quarto version:", system2("quarto"
 
 ```{r}
 #| label: setup
-#| echo: false
+#| include: false
 
 # Added bc of issues rendering
 source("fleet_pressure.R")
@@ -55,7 +55,7 @@ tidy(fit_docks)
 ## Part 1
 
 ```{r}
-#| label: 1a
+#| label: 1a - Rebuild the Cleaned Data
 #| echo: true
 
 nrow(clean)
@@ -95,7 +95,7 @@ nrow(daily)
 ## Part 2
 
 ```{r}
-#| label: 2a
+#| label: 2a - Create First Simple Linear Regression Equation
 #| echo: true
 
 fit_docks <- lm(arrivals ~ docks, data = per_station)
@@ -122,7 +122,7 @@ augment(fit_docks, newdata = examples, type.predict = "response")
 ## Part 3
 
 ```{r}
-#| label: 3a
+#| label: 3a - Investigate Residuals to Assess Underbuilt Station(s)
 #| echo: true
 
 resid <- augment(fit_docks, data = per_station) |>
@@ -199,6 +199,8 @@ avg_dock_count
 ```{r}
 #| label: 4d
 #| echo: true
+#| fig-cap: "Coefficient Plot between Estimated Coefficients and Predictor Variables"
+#| fig-width: 8
 
 tidy(fit_two, conf.int = TRUE) |>
   filter(term != "(Intercept)") |>
@@ -339,9 +341,164 @@ glances
 
 ## Part 8
 
+```{r}
+#| label: 8a
+#| echo: true
+
+end_start <- clean |>
+  filter(!is.na(end_station_id)) |>
+  mutate(
+    round_trip = start_station_id == end_station_id 
+  )
+
+cat("Number of rows kept (out of 247,967 trips):", nrow(end_start), "trips\nBase rate of round_trip (when true):", round((mean(end_start$round_trip, na.rm = TRUE) * 100),2), "%")
+```
+
+```{r}
+#| label: 8b
+#| echo: true
+
+end_start <- end_start |>
+  mutate(
+    is_casual = rider_type == "casual",
+    evening = hour >= 16
+  )
+
+round_trip_rate <- end_start |>
+  group_by(is_casual) |>
+  summarise(
+    round_trip_rate = round(mean(round_trip, na.rm = TRUE) * 100, 2),
+    .groups = "drop"
+  )
+  
+round_trip_rate
+```
+
+```{r}
+#| label: 8c
+#| echo: true
+
+fit_rt <- glm(round_trip ~ is_casual + duration_min + evening, family = binomial, data = end_start)
+
+tidy(fit_rt)
+```
+
+```{r}
+#| label: 8d
+#| echo: true
+
+odds <- tidy(fit_rt, exponentiate = TRUE, conf.int = TRUE)
+
+odds
+
+#(odds$estimate[2] - 1) * 100
+```
+
+***8d:*** The `is_casual` term means that a trip taken by a casual rider has `r round(((odds$estimate[2] - 1) * 100), 0)`% *higher* odds of being a `round_trip`.
+
+```{r}
+#| label: 8e
+#| echo: true
+
+mre_examples <- tibble(is_casual = c(TRUE, TRUE, FALSE, FALSE),
+                       duration_min = c(10, 45, 10, 45),
+                       evening = c(FALSE, FALSE, FALSE, FALSE))
+
+augment(fit_rt, newdata = mre_examples, type.predict = "response")
+```
+
+***8e:*** Of the four varied hypothetical trips, a `casual 10 minute` or `casual` `45 minute` trip is more likely to be a round trip than either duration from a `member` (from `.fitted` result).
+
+***Q8f:*** Two of my three predictors in my `fit_rt` model earn nothing: `duration_min` and `evening` as those variables are not significant from the odds ratio analysis in `8d`.
+
+***Q8g:*** I did not find that using `lm()` here predicted probabilities above 1. This is an example of weaker predictors returning perfectly legal-looking numbers when in reality the model doesn't have the greatest model fit with the two useless variables in the model.
+
+```{r}
+#| label: 8g
+#| echo: true
+
+fit_rt_lm <- lm(round_trip ~ is_casual + duration_min + evening, data = end_start)
+
+fit_rt_lm_aug <- augment(fit_rt_lm, type.predict = "response") |>
+  select(.fitted)
+
+cat("Range of fitted values: [", round(min(fit_rt_lm_aug$.fitted),2), round(max(fit_rt_lm_aug$.fitted),2), "]", "\nNumber of fitted values that fall outside 0 and 1:", sum(fit_rt_lm_aug$.fitted < 0 | fit_rt_lm_aug$.fitted > 1))
+```
+
+***Q8h:*** Regardless of the outcome of `8g`, `glm()` is the right tool because `lm()` does not guarantee that an objection will be thrown since it does not add bounds (constrain) to its predictions to valid probabilities (the fitted values) like `glm()` does. Also, an `lm()` coefficient on a 0/1 outcome is a percentage/proportion that can produce invalid probability predictions.
+
 ## Part 9
 
-## Part 10
+```{r}
+#| label: 9a
+#| echo: true
+
+fitted_probs <- augment(fit_rt, type.predict = "response")
+
+max(fitted_probs$.fitted, na.rm = TRUE)
+```
+
+```{r}
+#| label: 9b
+#| echo: true
+
+classified <- fitted_probs |>
+  mutate(predicted_round_trip = .fitted >= 0.5)
+
+print(sum(classified$predicted_round_trip, na.rm = TRUE))
+
+accuracy <- classified |>
+  summarise(
+    accuracy = mean(predicted_round_trip == round_trip, na.rm = TRUE)
+  )
+
+print(accuracy)
+```
+
+```{r}
+#| label: 9c
+#| echo: true
+
+acc_and_base_rate <- classified |>
+  summarise(
+    accuracy = round(mean(predicted_round_trip == round_trip, na.rm = TRUE),2),
+    base_rate_not_round_trip = round(mean(!end_start$round_trip, na.rm = TRUE),2)
+  )
+
+acc_and_base_rate
+```
+
+```{r}
+#| label: 9d
+#| echo: true
+
+reclassified <- fitted_probs |>
+  mutate(predicted_round_trip = .fitted >= 0.20)
+
+summry <- reclassified |>
+  summarise(
+    accuracy = round(mean(predicted_round_trip == round_trip, na.rm = TRUE),2),
+    positive = sum(predicted_round_trip, na.rm = TRUE),
+    recall = sum(predicted_round_trip & round_trip, na.rm = TRUE) / sum(round_trip, na.rm = TRUE),
+    precision = sum(predicted_round_trip & round_trip, na.rm = TRUE) / sum(predicted_round_trip, na.rm = TRUE)
+  )
+
+summry
+```
+
+***Q9e:*** The model had `r accuracy`% accuracy at the 0.5 cutoff, but this is misleading because the base rate of trips that are not round trips is also approximately `r acc_and_base_rate$base_rate_not_round_trip[1]`% (9a). At a cutoff of 0.5, the model classified `r sum(classified$predicted_round_trip, na.rm = TRUE)` trips as round trips (9c), so it failed to identify any actual round trips. Therefore, it doesn't successfully distinguish between round trips and non-round trips.
+
+***Q9f:*** Moving the cutoff to 0.2 made accuracy go down but the model more useful. This proves that accuracy is a valuable summary statistic that helps us distinguish a useless but excellent looking model from a genuine excellent model. This new cutoff helps catch more actual round trips, but there is a tradeoff. The operational cost Ride Knox pays for the lower threshold is spending more time and energy on responding to trips that may have been flaggeg incorrectly. Decreasing the cutoff increases false positives (flagging more trips as potential round trips, even if the trip is ***not*** actually a round trip).
+
+## Part 10  
+
+***10c:*** The percentage of casual ridership fell by about `r round(coef(fit_share)[["post_julyTRUE"]], 0)` (95% CI \[`r round(confint(fit_share)["post_julyTRUE", ], 0)`\]) percentage points per day after thes price increase.
+
+***10d:*** Part 4d is figure code chunk.
+
+***Q10e:*** Inline code give numbers from my analysis that cannot go stale. Since no number in the prose was typed, the sentence in 10c will be updated if re-run with an extra month of data. This fixes the gap between "what the analysis found" and "what the memo says" addressing the finance director's complaint about the headliner from the last board meeting's memo not matching the spreadsheet. Now, it is all connected.
+
+***10f:*** `echo: false` hides the code, but shows the output (and still runs the code in the background). This is best for the board because they don't know or care about code, they need the numbers/output to make operational decisions. This should be used for my figure chunks of code. `include: false` hides the output, but still runs the code. This should be used for my library() and data loading chunks of code as this is only relevant for other analysts to know and see.
 
 ## Part 11
 
