@@ -38,7 +38,8 @@ theme_board <- theme_minimal(base_size = 13) +
     lineheight = 1.1,
     margin = margin(b = 8)
   ),
-  plot.title.position = "plot")
+  plot.title.position = "plot",
+  plot.subtitle = element_text(hjust = 0.5))
 dir.create("figs", showWarnings = FALSE)
 ```
 
@@ -307,7 +308,8 @@ integration_plot <- ggplot(
     se = FALSE
   ) +
   labs(
-    title = "Adjusting for weather and calendar variables, 2026 ran 40.48 more non-member trips per day than 2025, \n95% CI [30.96, 50.00]", # Otherwise, 2026 ran 30.69 more non-member trips per day than 2025, 95% CI [9.77, 51.62]
+    title = "2026 averaged 40.48 more non-member trips per day than 2025",
+    subtitle = "After adjusting for weather and calendar variables, 95% CI [30.96, 50.00]", # Otherwise, 2026 ran 30.69 more non-member trips per day than 2025, 95% CI [9.77, 51.62]
     x = "Date",
     y = "Daily non-member trips",
     color = "Year",
