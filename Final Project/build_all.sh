@@ -123,9 +123,14 @@ stamp "Stage 7 START: Staging public page"
 
 cp report/annual_report.html site/annual_report.html
 
-if [ -d report/annual_report_files ]; then
-    cp -R report/annual_report_files site/
-fi
+# Copy the lead figure used by the public homepage.
+mkdir -p site/figs
+cp report/figs/integration_daily_trips.png \
+   site/figs/integration_daily_trips.png
+
+cp ../2025_bundle/report.md site/2025_report.md
+cp ../2026_bundle/memo.md site/2026_memo.md
+cp ../README.md site/README.md
 
 stamp "Stage 7 COMPLETE: Public page staged"
 
