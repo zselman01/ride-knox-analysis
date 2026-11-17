@@ -12,8 +12,8 @@
 
 - **[The 2026 Annual Report](annual_report.html)** — Covers the two-year comparison picture, integration question analysis, cpacity changes over the two years, and the memo to the General Manager from this report. 
 
-- To view the full 2025 report, please visit **[2025 Report](2025_bundle/report.md)** [2025 Report]
+- To view the full 2025 report, please visit **[2025 Report](2025_report.md)**
 
-- To view the full 2026 mid-year memo, please visit **[2026 Memo](2026_bundle/memo.md)**
+- To view the full 2026 mid-year memo, please visit **[2026 Memo](2026_memo.md)**
 
 - To view the full README, please visit **[README](README.md)**
