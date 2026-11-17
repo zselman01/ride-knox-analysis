@@ -30,11 +30,24 @@ cat("R.version.string:", R.version.string, "| Quarto version:", system2("quarto"
 ```
 
 ```{r}
-#| label: setup
+#| label: 0c setup
 #| include: false
 
-# Added bc of issues rendering
-source("fleet_pressure.R")
+trips    <- read_csv("trips_2025.csv")
+stations <- read_excel("stations.xlsx")
+
+clean <- trips |>
+  distinct() |>
+  filter(start_station_id != "S99",
+         is.na(end_station_id) | end_station_id != "S99") |>
+  mutate (
+    rider_type = str_to_lower(str_trim(rider_type)),
+    duration_min = as.numeric(difftime(end_time, start_time, units="mins")),
+    month = month(start_time, label=TRUE),
+    hour = hour(start_time),
+    is_evening = hour >= 16
+  ) |>
+  filter(duration_min >=1, duration_min <= 1440)
 ```
 
 ```{r}
@@ -251,7 +264,7 @@ tidy(fit_share, conf.int = TRUE)
 glance(fit_share)
 ```
 
-***5c:*** The percentage of casual ridership fell by about `r round(coef(fit_share)[["post_julyTRUE"]], 0)` (95% CI \[`r round(confint(fit_share)["post_julyTRUE", ], 0)`\]) percentage points per day after the July 1, 2025 price increase.
+***5c:*** The percentage of casual ridership fell by about `r (round(coef(fit_share)[["post_julyTRUE"]], 0)) * -1` (95% CI \[`r round(confint(fit_share)["post_julyTRUE", ], 0)`\]) percentage points per day after the July 1, 2025 price increase.
 
 ***Q5d:*** A logical predictor becomes a 0/1 indicator so the slope is a difference in means. The intercept of this model means that there the percentage of casual riders was `r round(coef(fit_share)[["(Intercept)"]], 0)` before July 1, 2025 and fewer after because of the negative sign in the `post_julyTRUE` estimate.
 
@@ -486,20 +499,62 @@ summry <- reclassified |>
 summry
 ```
 
-***Q9e:*** The model had `r accuracy`% accuracy at the 0.5 cutoff, but this is misleading because the base rate of trips that are not round trips is also approximately `r acc_and_base_rate$base_rate_not_round_trip[1]`% (9a). At a cutoff of 0.5, the model classified `r sum(classified$predicted_round_trip, na.rm = TRUE)` trips as round trips (9c), so it failed to identify any actual round trips. Therefore, it doesn't successfully distinguish between round trips and non-round trips.
+***Q9e:*** The model had `r round(accuracy,2)`% accuracy at the 0.5 cutoff, but this is misleading because the base rate of trips that are not round trips is also approximately `r acc_and_base_rate$base_rate_not_round_trip[1]`% (9a). At a cutoff of 0.5, the model classified `r sum(classified$predicted_round_trip, na.rm = TRUE)` trips as round trips (9c), so it failed to identify any actual round trips. Therefore, it doesn't successfully distinguish between round trips and non-round trips.
 
-***Q9f:*** Moving the cutoff to 0.2 made accuracy go down but the model more useful. This proves that accuracy is a valuable summary statistic that helps us distinguish a useless but excellent looking model from a genuine excellent model. This new cutoff helps catch more actual round trips, but there is a tradeoff. The operational cost Ride Knox pays for the lower threshold is spending more time and energy on responding to trips that may have been flaggeg incorrectly. Decreasing the cutoff increases false positives (flagging more trips as potential round trips, even if the trip is ***not*** actually a round trip).
+***Q9f:*** Moving the cutoff to 0.2 made accuracy go down but the model more useful. This proves that accuracy is a valuable summary statistic that helps us distinguish a useless but excellent looking model from a genuine excellent model. This new cutoff helps catch more actual round trips, but there is a tradeoff. The operational cost Ride Knox pays for the lower threshold is spending more time and energy on responding to trips that may have been flagged incorrectly. Decreasing the cutoff increases false positives (flagging more trips as potential round trips, even if the trip is ***not*** actually a round trip).
 
-## Part 10  
+## Part 10
 
-***10c:*** The percentage of casual ridership fell by about `r round(coef(fit_share)[["post_julyTRUE"]], 0)` (95% CI \[`r round(confint(fit_share)["post_julyTRUE", ], 0)`\]) percentage points per day after thes price increase.
+***10c:*** The percentage of casual ridership fell by about `r (round(coef(fit_share)[["post_julyTRUE"]], 0))*-1` (95% CI \[`r round(confint(fit_share)["post_julyTRUE", ], 0)`\]) percentage points per day after these price increase.
 
-***10d:*** Part 4d is figure code chunk.
+***10d:*** Part 4d is the figure code chunk.
 
 ***Q10e:*** Inline code give numbers from my analysis that cannot go stale. Since no number in the prose was typed, the sentence in 10c will be updated if re-run with an extra month of data. This fixes the gap between "what the analysis found" and "what the memo says" addressing the finance director's complaint about the headliner from the last board meeting's memo not matching the spreadsheet. Now, it is all connected.
 
 ***10f:*** `echo: false` hides the code, but shows the output (and still runs the code in the background). This is best for the board because they don't know or care about code, they need the numbers/output to make operational decisions. This should be used for my figure chunks of code. `include: false` hides the output, but still runs the code. This should be used for my library() and data loading chunks of code as this is only relevant for other analysts to know and see.
 
-## Part 11
+## Part 11 - Rollback memo
 
-## Part 12 (Challenge)
+#### Bottom Line
+
+- A statistical model now puts values to the drop in casual ridership after the price increase.
+
+- At the *station-level*, I recommend the Hill - Ayres Hall in the UT Campus neighborhood get the next twelve docks.
+
+- The headline numbers of this memo appropriately match the spreadsheet it came from and are one file.
+
+#### Evidence
+
+The percentage of casual ridership fell by about `r (round(coef(fit_share)[["post_julyTRUE"]], 0))*-1` (95% CI \[`r round(confint(fit_share)["post_julyTRUE", ], 0)`\]) percentage points per day after these price increase.
+
+`r resid_print$station_name[1]` appears to be the most under-built station based on the model. It actually has `r resid_print$arrivals[1]` arrivals compared with `r round(resid_print$.fitted[1],2)` predicted arrivals, giving it the largest positive residual of `r round(resid_print$.resid[1],2)` trips. Actual demand substantially exceeds what the model predicts given its `r round(resid_print$docks[1],2)` docks.
+
+However, the neighborhood level is also important to consider. `r two_skills$neighborhood[1]` has the highest average positive residual (`r round(two_skills$avg_residual[1],2)`) with `r two_skills$stations[1]` stations, followed by `r two_skills$neighborhood[2]` (`r round(two_skills$avg_residual[2],2)`) with `r two_skills$stations[2]` . Therefore, `r two_skills$neighborhood[1]` may be generally underserved relative to predicted demand.
+
+#### Interpretation
+
+We now have a statistical model that quantifies the loss in casual ridership after the price increase, but the variables included in the model can change the estimates predicted.
+
+Residuals can be used to suggest potential underbuilding, but they do not prove that adding docks would solve the demand issue.
+
+#### Limitations
+
+Trips shorter than 1 minute and longer than 24 hours have been filtered out, trips missing an end_station_id have been kept in, and S99 stations have been filtered out from these analyses. Additional limitations from this assignment include, the greater variability after the price increase present in the data from our particular model and there are several other variables in our data set that have not been included/controlled for in our current estimates (e.g. weather).
+
+#### Recommendations
+
+The analyst team should consider adding other relevant variables from the data set to improve the current model's estimates. At the station-level, docks should be added to The Hill - Ayres Hall, but the board should also consider investigating stations at the neighborhood level as well to determine the best station to add docks to.
+
+***Q11d:*** We committed the source and ignored the output because source is versioned and output is generated. We would commit the rendered file anyway when its required for publishing or deploying the report.
+
+## Reflection & AI Disclosure
+
+**R1.** For 3d, the obvious explanation for why Bearden - Kingston Pike has the most negative residual is that a station added partway through the year would have only a partial year of trips, which would drag its total down through no fault of its own. However, when tested, Bearden's first trip is `r beard_seq$first_trip[1]` and its last trip is `r beard_seq$last_trip[1]` so the partial year explanation *does not* survive. Additionally, in 8g, I did not find that using `lm()` for that specific model predicted probabilities above 1. This is an example of weaker predictors returning perfectly legal-looking numbers when in reality the model doesn't have the greatest model fit with the two useless variables in the model. To avoid making mistakes similar to 3d, I can implement testing assumptions before believing they're hard facts like here where we double-checked what the first and last date of the trip was. To avoid making mistakes similar to 8g, I can make sure to use `glm()` when dealing with binary data.
+
+**R2.** Several results this week were significant, well-fitted, and misleading in some way: the Part 2 prediction at zero docks, the Part 6 residual pattern hiding inside a high R², the unequal residual spread you found in 6d, and the Part 9 accuracy at a 0.5 cutoff. I would have been least likely to catch the Part 9 accuracy at a 0.5 cutoff on my own. To catch it next time, I will play around with using different cutoff while being aware of the tradeoff that has for improving accuracy while also increasing the opportunity for false positives.
+
+**R3.** Module 12 had you assemble a log by hand; this week Quarto assembled it for you. It was nice to see the professional and organized `HTML` as the end product with little to no work on my end. However, writing in-line code is very tricky because you only know if everything is entered correctly after you render so it may also have to be checked in a code chunk before putting in the in-line text which is more work. I prefer Quarto though because of how easy it makes everything versus an `.md` log, so I would choose it for a piece of work nobody but me will ever read.
+
+**R4.** You have now given the finance director a number with an interval, which is more than "the timing points to the price change" ever offered. However, my model still cannot establish what has caused the drop in casual ridership after the price increase. Ride Knox will need to collect more data on *why* casual riders stopped riding through ridership surveys to close that gap.
+
+**R5. AI disclosure:** describe any use of generative AI tools in this assignment, or state "No generative AI tools were used." Example: *"I used a generative AI tool to explain why my logistic model never predicted above 0.5, and to help me find the argument that makes augment() return probabilities rather than log-odds. All final code, models, and conclusions are my own."*
