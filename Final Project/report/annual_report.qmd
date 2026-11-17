@@ -322,8 +322,8 @@ integration_plot
 ggsave(
   filename = "figs/integration_daily_trips.png",
   plot = integration_plot,
-  width = 9,
-  height = 5,
+  width = 6,
+  height = 3,
   dpi = 300
 )
 ```
