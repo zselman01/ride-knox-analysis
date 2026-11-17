@@ -41,8 +41,10 @@ rm -f "$DB"
 
 rm -f report/annual_report.html
 rm -rf report/annual_report_files
-rm -f site/annual_report.html
-rm -rf site/annual_report_files
+rm -f docs/annual_report.html
+rm -rf docs/annual_report_files
+rm -f docs/2025_report.md docs/2026_memo.md docs/README.md
+rm -f docs/figs/integration_daily_trips.png
 
 mkdir -p "$INCOMING_DIR" "$ACCEPTED_DIR" "$QUARANTINE_DIR" \
          "$STAGING_DIR" "$OUT_DIR"
@@ -121,16 +123,16 @@ stamp "Stage 6 COMPLETE: Annual report rendered"
 echo
 stamp "Stage 7 START: Staging public page"
 
-cp report/annual_report.html site/annual_report.html
+cp report/annual_report.html docs/annual_report.html
 
 # Copy the lead figure used by the public homepage.
-mkdir -p site/figs
+mkdir -p docs/figs
 cp report/figs/integration_daily_trips.png \
-   site/figs/integration_daily_trips.png
+   docs/figs/integration_daily_trips.png
 
-cp ../2025_bundle/report.md site/2025_report.md
-cp ../2026_bundle/memo.md site/2026_memo.md
-cp ../README.md site/README.md
+cp ../2025_bundle/report.md docs/2025_report.md
+cp ../2026_bundle/memo.md docs/2026_memo.md
+cp ../README.md docs/README.md
 
 stamp "Stage 7 COMPLETE: Public page staged"
 
