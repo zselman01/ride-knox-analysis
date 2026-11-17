@@ -45,6 +45,7 @@ rm -f docs/annual_report.html
 rm -rf docs/annual_report_files
 rm -f docs/2025_report.md docs/2026_memo.md docs/README.md
 rm -f docs/figs/integration_daily_trips.png
+rm -rf ../docs
 
 mkdir -p "$INCOMING_DIR" "$ACCEPTED_DIR" "$QUARANTINE_DIR" \
          "$STAGING_DIR" "$OUT_DIR"
@@ -133,6 +134,10 @@ cp report/figs/integration_daily_trips.png \
 cp ../2025_bundle/report.md docs/2025_report.md
 cp ../2026_bundle/memo.md docs/2026_memo.md
 cp ../README.md docs/README.md
+
+# So can be published to GitHub Pages
+mkdir -p ../docs
+cp -R docs/. ../docs/
 
 stamp "Stage 7 COMPLETE: Public page staged"
 
