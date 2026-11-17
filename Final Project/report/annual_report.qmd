@@ -11,7 +11,6 @@ execute:
   message: false
 ---
 
-
 ```{r}
 #| label: setup
 #| include: false
@@ -50,6 +49,7 @@ dir.create("figs", showWarnings = FALSE)
 ```{r}
 #| label: audit-counts
 #| include: false
+
 raw_total    <- sum(ledger$raw_rows, na.rm = TRUE)
 loaded_total <- sum(ledger$loaded, na.rm = TRUE)
 excl_total   <- sum(ledger$excluded_rows, na.rm = TRUE)
@@ -57,19 +57,19 @@ reportable   <- sum(coverage$reportable_trips)
 cov26        <- coverage |> filter(year == 2026)
 ```
 
-Across every source file the pipeline was presented with
-**`r format(raw_total, big.mark = ",")` raw rows**;
-**`r format(loaded_total, big.mark = ",")`** loaded,
-**`r format(excl_total, big.mark = ",")`** excluded under named reasons, and the arithmetic closes file by file (ledger below).
-**`r format(reportable, big.mark = ",")`** trips meet the reporting standard.
-2026 coverage ends **`r format(cov26$last_day, "%B %d, %Y")`**.
+Across every source file the pipeline was presented with **`r format(raw_total, big.mark = ",")` raw rows**; **`r format(loaded_total, big.mark = ",")`** loaded, **`r format(excl_total, big.mark = ",")`** excluded under named reasons, and the arithmetic closes file by file (ledger below). **`r format(reportable, big.mark = ",")`** trips meet the reporting standard. 2026 coverage ends **`r format(cov26$last_day, "%B %d, %Y")`**.
 
+```{=html}
 <!-- TODO: state YOUR October/coverage policy here, in a sentence the board
      can act on, and follow it in every section below. -->
+```
+
 The October 2026 delivery was released from the initial pipeline quarantine because of the data-team's exception. The pipeline excluded one malformed row and reports trips only up until October 11, 2026. October figures will therefore only show partial-month analyses.
 
 ```{r}
 #| label: ledger-table
+#| include: false
+
 knitr::kable(ledger, caption = paste0(
   "System reconciliation ledger: every raw row of every source file, ",
   "attributed to exactly one outcome."))
@@ -77,14 +77,17 @@ knitr::kable(ledger, caption = paste0(
 
 ## 2. The two-year picture
 
+```{=html}
 <!-- TODO: your two-year monthly figure (both years, by product, coverage
      policy applied, Module 12 chart standards, ggsave to figs/). -->
+```
 
 ## 3. The Integration Question
 
 ```{r}
 #| label: join-safety
 #| include: false
+
 # Join-safety proof: the weather extract must be one row per date, or the
 # join manufactures trips. The warehouse's PRIMARY KEY guarantees it; verify
 # anyway, in the open, and show the row count is unchanged by the join.
@@ -93,14 +96,18 @@ wx_dates <- n_distinct(weather$date)
 stopifnot(wx_rows == wx_dates)
 ```
 
+```{=html}
 <!-- TODO: this is the project's centerpiece and it is yours.
      Build the two-year daily table (comparable window, both years), join the
      audited weather with the row-count proof, handle the sentinel days with
      a visible count, fit the naive comparison AND the weather-adjusted
      model, report the year effect with its interval, interpret it honestly
      (what does the year term bundle?), and produce the figure. -->
+```
+
 ```{r}
 #| label: integration-question
+#| include: false
 
 # Keep the same January 1–October 11 window for both years (comparable window).
 integration_trips <- daily |>
@@ -181,6 +188,8 @@ The weather join preserved all `568` daily trip records, confirming that the joi
 
 ```{r}
 #| label: modeling-sample-audit
+#| include: false
+
 
 # Count usable observations for each model, separately by year.
 model_sample_audit <- integration_daily |>
@@ -222,6 +231,7 @@ weather_model_data <- integration_daily |>
 
 ```{r}
 #| label: integration-models
+#| include: false
 
 # Naive model: compares average daily non-member trips by year.
 # Uses all 568 daily observations (includes dates with missing precipitation values).
@@ -279,12 +289,12 @@ knitr::kable(
 )
 ```
 
-
 ```{r}
 #| label: integration-figure
 #| fig-cap: "Daily non-member trips during the comparable January 1–October 11 periods in 2025 and 2026. Lines show separate linear trends for each year."
 #| fig-width: 9
 #| fig-height: 5
+#| include: false
 
 integration_plot <- ggplot(
   integration_daily,
@@ -297,7 +307,7 @@ integration_plot <- ggplot(
     se = FALSE
   ) +
   labs(
-    title = "Adjusting for weather, 2026 ran 40.48 more non-member trips per day than 2025, \n95% CI [30.96, 50.00]", # Otherwise, 2026 ran 30.69 more non-member trips per day than 2025, 95% CI [9.77, 51.62]
+    title = "Adjusting for weather and calendar variables, 2026 ran 40.48 more non-member trips per day than 2025, \n95% CI [30.96, 50.00]", # Otherwise, 2026 ran 30.69 more non-member trips per day than 2025, 95% CI [9.77, 51.62]
     x = "Date",
     y = "Daily non-member trips",
     color = "Year",
@@ -317,13 +327,14 @@ ggsave(
 ```
 
 ### Interpretation
-For the model analyses, 2025 includes casual riders only as non-member riders, while 2026 bundles casual and day pass riders as non-member riders. The naive model estimates that 2026 averaged 30.69 more non-member trips per day than 2025 (95% CI [9.77–51.62]). After adjusting for maximum temperature, minimum temperature, precipitation, weekday, and month, the estimated average difference increased to 40.48 more non-member trips per day between  2025 and 2026 (95% CI [30.96–50.00]; see figs/integration_daily_trips.png). The larger adjusted estimate/model suggests that weather and calendar structures account for **some** variation in daily non-member trips across years, information not available in the naive model. However, these adjustments do not establish the cause of that increase from the naive model.
 
+For the model analyses, 2025 includes casual riders only as non-member riders, while 2026 bundles casual and day pass riders as non-member riders. The naive model estimates that 2026 averaged `r round(year_effects$estimate[1], 2)` more non-member trips per day than 2025 (95% CI \[`r round(year_effects$conf.low[1], 2)` – `r round(year_effects$conf.high[1], 2)`\]). After adjusting for maximum temperature, minimum temperature, precipitation, weekday, and month, the estimated average difference increased to `r round(year_effects$estimate[2], 2)` more non-member trips per day between 2025 and 2026 (95% CI \[`r round(year_effects$conf.low[2], 2)` – `r round(year_effects$conf.high[2], 2)`\]; see figs/integration_daily_trips.png). The larger adjusted estimate/model suggests that weather and calendar structures account for **some** variation in daily non-member trips across years, information not available in the naive model. However, these adjustments do not establish the cause of that increase from the naive model.
 
 ## 4. Capacity, with each year's own denominators
 
 ```{r}
 #| label: capacity-comparison
+#| include: false
 
 # Focus on stations with capacity changes and the newly added station.
 capacity_comparison <- capacity |>
@@ -360,11 +371,13 @@ knitr::kable(
 )
 ```
 
-The capacity comparison highlights Leadership acted on two stations (Hodges Library (S06) and Student Union - UT (S08)) by increasing the dock capacity from 24 in 2025 to 32 in 2026. Cumberland Ave & 22nd St (S25) was a new station added in 2026 so that is why it has no 2025 comparison. 
+The capacity comparison highlights Leadership acted on two stations (Hodges Library (S06) and Student Union - UT (S08)) by increasing the dock capacity from 24 in 2025 to 32 in 2026. Cumberland Ave & 22nd St (S25) was a new station added in 2026 so that is why it has no 2025 comparison.
 
 Departures per dock are calculated using each year's actual dock count (as calculated by the `dock_history` table in the `sql/schema.sql`), therefore historical dock counts are appropriately used for 2025's capacity. This provides a year-correct measure of station activity relative to available capacity. Although departures per dock help describe station pressure, they do not independently establish whether a station experienced capacity shortages or unmet demand.
 
 ## 5. Memo to the General Manager
 
+```{=html}
 <!-- TODO: 250-350 words, five-part structure, every number inline code,
      denominators on every percentage, banned words per the instructions. -->
+```
