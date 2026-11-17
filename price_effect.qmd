@@ -545,6 +545,14 @@ Trips shorter than 1 minute and longer than 24 hours have been filtered out, tri
 
 The analyst team should consider adding other relevant variables from the data set to improve the current model's estimates. At the station-level, docks should be added to The Hill - Ayres Hall, but the board should also consider investigating stations at the neighborhood level as well to determine the best station to add docks to.
 
+***11c:***
+
+``` bash
+$ git status
+On branch feature/assignment-13
+nothing to commit, working tree clean
+```
+
 ***Q11d:*** We committed the source and ignored the output because source is versioned and output is generated. We would commit the rendered file anyway when its required for publishing or deploying the report.
 
 ## Reflection & AI Disclosure
