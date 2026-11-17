@@ -10,6 +10,8 @@ staging/
 # Output files
 out/
 logs/
+../.Rhistory
+
 
 # Credentials
 .env
