@@ -1,34 +1,17 @@
-# Ride Knox Ridership Analysis
+# Ride Knox Ridership Analysis: Two Years, One System
 
 ## Overview 
 ### The Day Pass Brought the Casual Riders Back, Campus Pressure was Relieved, and Member Riders Were Unaffected
 
 
-### 2026 Chapter: Key Findings
-The Day Pass brought casual riders back. The dock expansion and new station fix the campus crunch. One out of two idle stations from 2025 seem to still be sitting idle.
-![Duration per rider type](2026_bundle/charts/share_by_rider_type_2026.png)
+## Repository handover
+
+This repository contains the Ride Knox data science projects and the final integrated warehouse and reporting pipeline. The Final Project/ directory contains the reproducible build system. The build system takes the raw trips, station (2026), and weather data, validates and prepares the trip files, loads a SQLite warehouse, produces reporting extracts, renders the annual report, and stages the public-facing GitHub Pages site.
+
+The purpose of this handover is to let someone unfamiliar with the project rebuild it, locate its outputs, and understand its operational limits without relying on me (the original developer).
 
 
-(1) Comparing March 2025 (before price increase) to March 2026 (after price increase, and after Day Pass was introduced), \~43% (19,716 total trips) to \~38% (20,145 total trips) of trips were taken by non-members. Comparing June 2025 to June 2026, \~44% (31,260 total trips) to \~44% (34,771 total trips) of trips were taken by non-members. Additionally, the median duration of trips for Casual riders and Member riders was consistent from 2025 - 2026. Day Pass riders had the highest median duration at 20.6 min/trip! In assessing the number of trips Day Pass riders are taking per hour, the pattern looks similar to those of Casual riders where most rides are being taken in the afternoon.
-
-(2) The arrivals per dock for S06 and S08 have substantially declined from 2025 (average of about 53 arrivals/dock combined for both stations) to 2026 (average of about 36 arrivals/dock combined for both stations). For the idle stations (S24 and S23) from 2025, they both have the lowest trip count (981 and 1075 trips) and departures per dock (98.1 and 89.6 dep/dock). However, Bearden (S23), appears to be growing more/faster than Sequoyah (S24). For the new station (S25), it is in the top 10 for both the number of departures per dock and the total number of trips, even though it has only been in operation for 4 months!
-
-To view the full 2026 memo, please visit [2026 Memo](2026_bundle/memo.md)
-
-
-
-### 2025 Chapter: Key Findings
-Of the 10 stations with the most pressure (according to trips per dock), there are four stations in the **UT Campus neighborhood** that are most pressured. However, there is near-idleness observed for both Bearden and Sequoyah Hills stations.
-![Station Trips per dock](2025_bundle/charts/trips_per_dock_by_station_2025.png)
-
-
-For the ridership question, in comparison to the increase in member riders, the number of casual riders drops significantly (10.4% out of 31,279 (June) - 26,926 (July) total riders) from June to July 2025 (see Member vs. Casual Trips per Month, 2025 chart above). For the pressure question, slack seems to be present especially in the UT Campus neighborhood, where there is a lot of pressure, but not a lot of docks (e.g., The Hill with only 12 docks but about 1,156 trips per dock, and Hodges and the Student Union with only 24 docks have about 1,063 and 1,015 trips per dock respectively, etc.). Additionally, there is roughly a 1,000-trip difference between the top and bottom stations. Also, see the Trips per dock by Station Names, 2025 chart above.
-
-To view the full 2025 report, please visit [2025 Report](2025_bundle/report.md)
-
-
-
-### Data
+## Data
 Raw files are **not** in this repo (~22 MB, and we believe you should never edit raw data).
 We have schemas of our data below, but request raw data files from the Ride Knox data team.
 
@@ -62,13 +45,93 @@ We have schemas of our data below, but request raw data files from the Ride Knox
 | year_installed        | int      | year station was installed            |
 
 
+## Repository layout
+
+| Location                         | Purpose                                                                        |
+|----------------------------------|--------------------------------------------------------------------------------|
+|2025_bundle/                      | Earlier project materials and 2025 report                                      |
+|2026_bundle/                      | Earlier project materials and 2026 memo                               |
+|Final Project/                    | Main integrated pipeline and annual report                                     |
+|Final Project/data/               | Raw input data; supplied separately and not committed                          |
+|Final Project/pipeline/           | Intake gate, quarantine release, preparation, and Python warehouse loader      |
+|Final Project/sql/                | Warehouse schema, reporting views, and extract queries                         |
+|Final Project/report/             | Quarto (R) annual report source and generated report                               |
+|Final Project/docs/               | GitHub Pages source and locally staged publication files                       |
+|docs/                             | Repository-level GitHub Pages publication directory                            |
+|Final Project/out/                | Generated database, SQL extracts, receipts, and build summary                  |
+|Final Project/expected_receipts/  | Reference receipt files for comparison                                         |
+|Final Project/ARCHITECTURE.md     | Pipeline architecture documentation                                            |
+|Final Project/TOOL-DEFENSE.md     | Tool choices and implementation trade-offs                                     |
+
+The build script runs from its own directory (Final Project/), so paths inside the pipeline are relative to Final Project/, even when the command is launched from the repository root.
 
 
-### Tools/How to Run: Python, pandas, matplotlib
-For both 2025 and 2026 notebooks: 
-- Install [requirements.txt](requirements.txt)
-- Open analysis.ipynb
-- Restart & Run All
+## Tools/How to Run: Bash, Python, SQL, Quarto, and R
+To run the build script: 
+
+The build is intended to run in Bash. On Windows, use Git Bash or another compatible Bash environment.
+
+Install and make available:
+- Bash
+- Python 3
+- SQLite command-line tools (sqlite3)
+- Quarto
+- R
+- The Python and R packages listed in Final Project/requirements.txt
+- The R packages used by the annual report: knitr, readr, dplyr, ggplot2, lubridate, and broom
+
+The Python requirements are:
+```bash
+pandas==3.0.3
+openpyxl==3.1.5
+```
+
+From Final Project/, install them with:
+```bash
+python3 -m pip install -r requirements.txt
+```
+
+The R package versions are not pinned by this project. Quarto must be installed separately and available on the command line.
+
+Install the R packages from an R console:
+```bash
+install.packages(c(
+  "knitr",
+  "readr",
+  "dplyr",
+  "ggplot2",
+  "lubridate",
+  "broom"
+))
+```
+
+## Where the data goes
+
+Obtain the original source data separately and place it in:
+```bash
+Final Project/data/
+```
+The directory must contain:
+- The trip CSV files named trips_*.csv
+- stations_2026.xlsx
+- weather_knoxville_daily.csv
+
+The trip files are copied into incoming/ by the build. Do not manually place files into accepted/, quarantine/, or staging/; those directories are generated by the pipeline. The loader uses stations_2026.xlsx for station reference data.
+
+**Important**: data/ is gitignored. A clean Git clone does not include the raw data, so the successor must obtain the source data bundle before rebuilding. Keep the original files unchanged. The pipeline works on copies.
+
+## Rebuilding the project: The one command rebuild
+
+From the repository root, run:
+```bash
+bash "Final Project/build_all.sh"
+```
+or from inside Final Project/, run:
+```bash
+bash build_all.sh
+```
+
+
 
 
 
