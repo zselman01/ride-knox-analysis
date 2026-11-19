@@ -1,34 +1,16 @@
-# Ride Knox Ridership Analysis
+# Ride Knox Ridership Analysis: Two Years, One System
 
 ## Overview 
 ### The Day Pass Brought the Casual Riders Back, Campus Pressure was Relieved, and Member Riders Were Unaffected
 
 
-### 2026 Chapter: Key Findings
-The Day Pass brought casual riders back. The dock expansion and new station fix the campus crunch. One out of two idle stations from 2025 seem to still be sitting idle.
-![Duration per rider type](2026_bundle/charts/share_by_rider_type_2026.png)
+## Repository handover
+This repository contains the Ride Knox data science projects and the final integrated warehouse and reporting pipeline. The Final Project/ directory contains the reproducible build system. The build system takes the raw trips, station (2026), and weather data, validates and prepares the trip files, loads a SQLite warehouse, produces reporting extracts, renders the annual report, and stages the public-facing GitHub Pages site.
+
+The purpose of this handover is to let someone unfamiliar with the project rebuild it, locate its outputs, and understand its operational limits without relying on me (the original developer).
 
 
-(1) Comparing March 2025 (before price increase) to March 2026 (after price increase, and after Day Pass was introduced), \~43% (19,716 total trips) to \~38% (20,145 total trips) of trips were taken by non-members. Comparing June 2025 to June 2026, \~44% (31,260 total trips) to \~44% (34,771 total trips) of trips were taken by non-members. Additionally, the median duration of trips for Casual riders and Member riders was consistent from 2025 - 2026. Day Pass riders had the highest median duration at 20.6 min/trip! In assessing the number of trips Day Pass riders are taking per hour, the pattern looks similar to those of Casual riders where most rides are being taken in the afternoon.
-
-(2) The arrivals per dock for S06 and S08 have substantially declined from 2025 (average of about 53 arrivals/dock combined for both stations) to 2026 (average of about 36 arrivals/dock combined for both stations). For the idle stations (S24 and S23) from 2025, they both have the lowest trip count (981 and 1075 trips) and departures per dock (98.1 and 89.6 dep/dock). However, Bearden (S23), appears to be growing more/faster than Sequoyah (S24). For the new station (S25), it is in the top 10 for both the number of departures per dock and the total number of trips, even though it has only been in operation for 4 months!
-
-To view the full 2026 memo, please visit [2026 Memo](2026_bundle/memo.md)
-
-
-
-### 2025 Chapter: Key Findings
-Of the 10 stations with the most pressure (according to trips per dock), there are four stations in the **UT Campus neighborhood** that are most pressured. However, there is near-idleness observed for both Bearden and Sequoyah Hills stations.
-![Station Trips per dock](2025_bundle/charts/trips_per_dock_by_station_2025.png)
-
-
-For the ridership question, in comparison to the increase in member riders, the number of casual riders drops significantly (10.4% out of 31,279 (June) - 26,926 (July) total riders) from June to July 2025 (see Member vs. Casual Trips per Month, 2025 chart above). For the pressure question, slack seems to be present especially in the UT Campus neighborhood, where there is a lot of pressure, but not a lot of docks (e.g., The Hill with only 12 docks but about 1,156 trips per dock, and Hodges and the Student Union with only 24 docks have about 1,063 and 1,015 trips per dock respectively, etc.). Additionally, there is roughly a 1,000-trip difference between the top and bottom stations. Also, see the Trips per dock by Station Names, 2025 chart above.
-
-To view the full 2025 report, please visit [2025 Report](2025_bundle/report.md)
-
-
-
-### Data
+## Data
 Raw files are **not** in this repo (~22 MB, and we believe you should never edit raw data).
 We have schemas of our data below, but request raw data files from the Ride Knox data team.
 
@@ -62,32 +44,173 @@ We have schemas of our data below, but request raw data files from the Ride Knox
 | year_installed        | int      | year station was installed            |
 
 
+## Repository (ride-knox-analysis/) layout
+| Location                           | Purpose                                                                        |
+|------------------------------------|--------------------------------------------------------------------------------|
+|`2025_bundle/`                      | Earlier project materials and 2025 report                                      |
+|`2026_bundle/`                      | Earlier project materials and 2026 memo                                        |
+|...from entire semester             | ...                                                                            |
+|`Final Project/`                    | Main integrated pipeline and annual report                                     |
+|`Final Project/data/`               | Raw input data; supplied separately and not committed                          |
+|`Final Project/pipeline/`           | Intake gate, quarantine release, preparation, and Python warehouse loader      |
+|`Final Project/sql/`                | Warehouse schema, reporting views, and extract queries                         |
+|`Final Project/report/`             | Quarto (R) annual report source and generated report                           |
+|`Final Project/docs/`               | GitHub Pages source and locally staged publication files                       |
+|`docs/`                             | Repository-level GitHub Pages publication directory                            |
+|`Final Project/out/`                | Generated database, SQL extracts, receipts, and build summary                  |
+|`Final Project/expected_receipts/`  | Reference receipt files for comparison                                         |
+|`Final Project/ANCHORS.md`          | Anchors used to check against for this project                                 |
+|`Final Project/ARCHITECTURE.md`     | Pipeline architecture documentation                                            |
+|`Final Project/TOOL-DEFENSE.md`     | Tool choices and implementation trade-offs                                     |
+
+The build script runs from its own directory (Final Project/), so paths inside the pipeline are relative to Final Project/, even when the command is launched from the repository root.
 
 
-### Tools/How to Run: Python, pandas, matplotlib
-For both 2025 and 2026 notebooks: 
-- Install [requirements.txt](requirements.txt)
-- Open analysis.ipynb
-- Restart & Run All
+## Tools/How to Run: Bash, Python, SQL, Quarto, and R
+To run the build script: 
+
+The build is intended to run in Bash. On Windows, use Git Bash or another compatible Bash environment.
+
+Install and make available:
+- Bash
+- Python 3
+- SQLite command-line tools (sqlite3)
+- Quarto
+- R
+- The Python and R packages listed in Final Project/requirements.txt
+- The R packages used by the annual report: knitr, readr, dplyr, ggplot2, lubridate, and broom
+
+The Python requirements are:
+```bash
+pandas==3.0.3
+openpyxl==3.1.5
+```
+
+From Final Project/, install them with:
+```bash
+python3 -m pip install -r requirements.txt
+```
+
+The R package versions are not pinned by this project. Quarto must be installed separately and available on the command line.
+
+Install the R packages from an R console:
+```bash
+install.packages(c(
+  "knitr",
+  "readr",
+  "dplyr",
+  "ggplot2",
+  "lubridate",
+  "broom"
+))
+```
+
+## Where the data goes
+
+Obtain the original source data separately and place it in:
+```bash
+Final Project/data/
+```
+The directory must contain:
+- The trip CSV files named `trips_*.csv`
+- `stations_2026.xlsx`
+- `weather_knoxville_daily.csv`
+
+The trip files are copied into incoming/ by the build. Do not manually place files into accepted/, quarantine/, or staging/; those directories are generated by the pipeline. The loader uses stations_2026.xlsx for station reference data.
+
+**Important**: data/ is gitignored. A clean Git clone does not include the raw data, so the successor must obtain the source data bundle before rebuilding. Keep the original files unchanged. The pipeline works on copies.
 
 
+## Rebuilding the project: The one command rebuild
 
-### Limitations
-Our data for a few variables is only over a short period of time. There are stations that have been excluded because they were missing both end station IDs and end times. We should collect information from our rider that could be influencing their riding (e.g., reasons for riding, etc.). The one minute cutoff rule implemented in the analysis causes us to lose data points that may otherwise influence our analysis. We excluded trips longer than 24 hours (bikes likely never docked properly).
+From the repository root, run:
+```bash
+bash "Final Project/build_all.sh"
+```
+or from inside Final Project/, run:
+```bash
+bash build_all.sh
+```
+
+## Stage table
+
+The stages run in order. Each stage prints a timestamped START and COMPLETE message. The script uses set -euo pipefail, so a failing command stops the build rather than allowing later stages to proceed.
+
+| Stage | Reads | Writes | What happens |
+|---|---|---|---|
+| 0. Reset | Existing generated directories and files | Clean working directories | Removes prior `incoming/`, `accepted/`, `quarantine/`, `staging/`, and `out/` directories; removes the configured database and generated report/publication copies. Preserves raw data and source files. |
+| 1. Working copies | `data/trips_*.csv` | `incoming/` | Copies raw trip files into the working inbox. Raw source files are never modified. |
+| 2. Intake gate and quarantine release*** | `incoming/` | `accepted/`, `quarantine/`, `out/gate_receipts.csv` | Checks headers, row counts, malformed rows, and duplicates. Files that pass move to `accepted/`; failing files move to `quarantine/`. The build explicitly releases `trips_2026_10.csv` from the documented October exception. |
+| 3. Repair and Structural Filter*** | `accepted/*.csv` | `staging/`, `out/prepare_receipts.csv` | Repairs the known August station-name defect and removes rows that do not have exactly eight fields. Original accepted files remain unchanged. |
+| 4. Warehouse loading | `staging/`, `data/stations_2026.xlsx`, `data/weather_knoxville_daily.csv`, `sql/schema.sql`, preparation and gate receipts | SQLite database, `out/system_reconciliation.csv` | Creates the warehouse, loads reference and weather data, normalizes rider types, and loads trips in chronological order based on file contents. Checks that each source file's raw rows reconcile to loaded and excluded rows. |
+| 5. Reporting layer | SQLite database, `sql/views.sql`, `sql/extracts.sql` | SQL views and CSV extracts in `out/` | Creates reporting views and exports the datasets used by the annual report. |
+| 6. Report rendering | `report/annual_report.qmd`, CSV extracts in `out/` | `report/annual_report.html`, report figures | Renders the annual report with Quarto. The report reads the SQL-generated extracts and reconciliation ledger, not the raw trip files or database directly. |
+| 7. Public-site | Rendered report, report figure, `2025_bundle/report.md`, `2026_bundle/memo.md`, and `Final Project/docs/` source files | `Final Project/docs/` and repository-level `docs/` | Copies the report, lead figure, earlier project reports, and memo into the local publication directory, then copies its contents into the repository-level `docs/` directory to be used by GitHub Pages. |
+| 8. Build summary | SQLite database, generated receipts, accepted and quarantined files | `out/build_summary.txt` | Counts warehouse trips, reportable trips, and weather records; lists accepted and quarantined files; identifies the receipt and extract locations. Prints the summary to the terminal. |
+
+*** - see Intake policy notes below
 
 
+## Intake policy and important data decisions from Stage table
 
-### Monday briefing
-*Must add first:* export RIDE_KNOX_TOKEN=… # ask the data team
+The intake gate checks each trip file against the following defaults:
 
-*Windows:* source .venv/Scripts/activate (.venv/bin/activate for Mac)
+- At least 15,000 rows
+- No more than 100 malformed rows
+- No more than 1,000 duplicate rows
+- The expected eight-column header
 
-*Bash:* ./pipeline/check_data.sh 2025
+A file that fails a check is quarantined. A quarantine verdict is recorded as a data-quality decision; it does not, by itself, stop the build. The gate records the decision and the build continues with the files that were accepted, plus the explicitly released October file. Review the receipts even when the overall build succeeds.
 
-*Inputs:* trips_YYYY.csv *or* trips_YYYY_MM.csv; ride_knox.db
+The current build contains one explicit exception: trips_2026_10.csv is released from quarantine by release_quarantine.sh, with the reason recorded in the gate receipts. This reflects the documented decision to use the truncated October delivery while carrying its coverage limitations into the reporting process.
 
-*Outputs:* out_assignment11/*.txt, out_assignment11/stations_pressure.csv
+The older trips_2026_09.csv remains quarantined. The September resend is the accepted source for that period.
 
-*Safe to re-run:* yes (trip_id primary key rejects re-loads)
+The preparation stage also repairs the Downtown station-name defect and removes structurally invalid rows. The loader then accounts for duplicate copies, previously loaded overlapping trips, unknown stations, and structural exclusions. A reconciliation failure stops the build.
 
-*Fails if:* the API key, export or database is missing, or has more than 1,000 duplicates
+These are deliberate pipeline policies. Do not bypass the gate, release additional files, or change thresholds without reviewing the resulting data-quality and coverage implications.
+
+
+## Where the receipts and outputs live
+
+All paths below are relative to `Final Project/`.
+
+| File or directory | Contents |
+|---|---|
+| `out/build_summary.txt` | Final warehouse totals, accepted and quarantined file lists, and receipt locations |
+| `out/gate_receipts.csv` | Intake gate decisions, reasons, and the explicit October release record |
+| `out/prepare_receipts.csv` | Raw, repaired, structurally dropped, and staged row counts by accepted file |
+| `out/system_reconciliation.csv` | Source-level accounting of raw, loaded, and excluded rows |
+| `out/` | SQL reporting extracts, including `monthly_by_product.csv`, `daily_products.csv`, `weather_daily.csv`, `capacity_by_year.csv`, and `coverage.csv` |
+| `out/ride_knox_wh.db` | Default SQLite warehouse database |
+| `report/annual_report.qmd` | Editable Quarto report source |
+| `report/annual_report.html` | Rendered annual report |
+| `report/figs/` | Report figures, including the lead integration figure |
+| `Final Project/docs/` | Local publication source and staged copies |
+| Repository-level `docs/` | Files staged for GitHub Pages publication |
+
+`expected_receipts/` contains reference receipt files; it is not the live output directory. The current run's receipts are written to `out/`.
+
+
+## Publishing changes
+
+The build stages the public site into the repository-level `docs/` directory. To publish a rebuilt site, review the generated files, then commit and push the updated repository-level `docs/` contents to the branch configured for GitHub Pages.
+
+
+## Safe to re-run
+Safe to re-run from the original, unchanged data/ directory: Since stage 0 removes the previous database, working directories, extracts, generated report copies, and repository-level docs/ publication output before rebuilding them, the build is safe to re-run.
+
+If RIDE_KNOX_DB is set to a custom path, Stage 0 deletes the database file at that path as well. Do not point it at a database that must be preserved.
+
+
+## Fails if
+
+The build stops when a required command or stage returns a nonzero exit status. In practice, this includes:
+
+- The configured DATA_DIR does not exist.
+- A required input file or expected input pattern is missing. For example, the Stage 1 trip-file copy fails if no trips_*.csv files are present.
+- A required program or dependency is unavailable, such as Python, a required Python package, sqlite3, Quarto, R, or a required R package.
+- A pipeline script, SQL command, or Python loader fails.
+- A per-file warehouse reconciliation check does not balance.
+- Quarto fails to render the annual report or produces an empty report/annual_report.html.
+- A required file for public-site staging is missing.
