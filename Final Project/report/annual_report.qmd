@@ -83,6 +83,54 @@ knitr::kable(ledger, caption = paste0(
      policy applied, Module 12 chart standards, ggsave to figs/). -->
 ```
 
+```{r}
+#| label: two-year-monthly-figure
+#| fig-cap: "Monthly trips during the comparable January 1–October 11 periods in 2025 and 2026 for each rider type (casual, member, and day pass (for 2026))."
+#| fig-width: 18
+#| fig-height: 6
+#| include: false
+
+monthly_figure <- monthly |>
+  filter(!(month == "2025-11") & !(month == "2025-12"))
+
+monthly_figure |>
+  filter(grepl("2026", month)) |>
+  summarise(total_trips = sum(trips, na.rm = TRUE))
+
+ggplot(
+  monthly_figure,
+  aes(x = month, y = trips, color = product_code, group = product_code)
+) +
+  geom_line(linewidth = 2) + 
+  geom_point(size = 5) +
+  geom_vline(xintercept = 11, linetype = "dashed", colour = "black") +
+    annotate("text", x = 9, y = 19000, label = "New Year",
+             hjust = 0, size = 6, colour = "red") +
+  scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
+  labs(
+    title = "2025 & 2026 Monthly Figure",
+    subtitle = "Both years, by product, coverage policy applied",
+    x = "Year-Month",
+    y = "Number of Trips",
+    color = "Rider Type",
+    caption = "n = 224,136 trips for 2025 and n = 233,803 trips for 2026, Ride Knox export."
+  ) +
+  theme_board +
+  theme(
+    plot.subtitle = element_text(hjust = 0.5),
+    plot.title = element_text(size = rel(1.3)),
+    text = element_text(size = 20)
+  )
+
+ggsave(
+  filename = "figs/two_year_monthly_by_prod.png",
+  plot = integration_plot,
+  width = 18,
+  height = 6,
+  dpi = 300
+)
+```
+
 ## 3. The Integration Question
 
 ```{r}
@@ -293,8 +341,8 @@ knitr::kable(
 ```{r}
 #| label: integration-figure
 #| fig-cap: "Daily non-member trips during the comparable January 1–October 11 periods in 2025 and 2026. Lines show separate linear trends for each year."
-#| fig-width: 9
-#| fig-height: 5
+#| fig-width: 11
+#| fig-height: 6
 #| include: false
 
 integration_plot <- ggplot(
