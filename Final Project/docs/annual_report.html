@@ -2181,7 +2181,7 @@ vertical-align: -.125em;
   <li><a href="#the-two-year-picture" id="toc-the-two-year-picture" class="nav-link" data-scroll-target="#the-two-year-picture">2. The two-year picture</a></li>
   <li><a href="#the-integration-question" id="toc-the-integration-question" class="nav-link" data-scroll-target="#the-integration-question">3. The Integration Question</a>
   <ul class="collapse">
-  <li><a href="#interpretation" id="toc-interpretation" class="nav-link" data-scroll-target="#interpretation">Interpretation</a></li>
+  <li><a href="#integration-question-interpretation" id="toc-integration-question-interpretation" class="nav-link" data-scroll-target="#integration-question-interpretation">Integration Question Interpretation</a></li>
   </ul></li>
   <li><a href="#capacity-with-each-years-own-denominators" id="toc-capacity-with-each-years-own-denominators" class="nav-link" data-scroll-target="#capacity-with-each-years-own-denominators">4. Capacity, with each year’s own denominators</a></li>
   <li><a href="#memo-to-the-general-manager" id="toc-memo-to-the-general-manager" class="nav-link" data-scroll-target="#memo-to-the-general-manager">5. Memo to the General Manager</a></li>
@@ -2237,20 +2237,34 @@ vertical-align: -.125em;
      model, report the year effect with its interval, interpret it honestly
      (what does the year term bundle?), and produce the figure. -->
 <p>The weather join preserved all <code>568</code> daily trip records, confirming that the join did not change the number of observations. The comparison includes <code>284</code> days from each year, covering the same January 1–October 11 dates chosen as the acceptable comparison window. All trip dates had a corresponding weather record. However, precipitation was missing for <code>6</code> matched dates because sentinel values had been converted to missing values during warehouse loading. These observations will be excluded from analyses requiring precipitation rather than treating missing values as zero. Lastly, in the following analyses, day pass riders are counted as non-members to ensure there are two categories (members and non-members (casual and day pass riders)).</p>
-<section id="interpretation" class="level3">
-<h3 class="anchored" data-anchor-id="interpretation">Interpretation</h3>
+<section id="integration-question-interpretation" class="level3">
+<h3 class="anchored" data-anchor-id="integration-question-interpretation">Integration Question Interpretation</h3>
 <p>For the model analyses, 2025 includes casual riders only as non-member riders, while 2026 bundles casual and day pass riders as non-member riders. The naive model estimates that 2026 averaged 30.69 more non-member trips per day than 2025 (95% CI [9.77 – 51.62]). After adjusting for maximum temperature, minimum temperature, precipitation, weekday, and month, the estimated average difference increased to 40.48 more non-member trips per day between 2025 and 2026 (95% CI [30.96 – 50]; see figs/integration_daily_trips.png). The larger adjusted estimate/model suggests that weather and calendar structures account for <strong>some</strong> variation in daily non-member trips across years, information not available in the naive model. However, these adjustments do not establish the cause of that increase from the naive model.</p>
 </section>
 </section>
 <section id="capacity-with-each-years-own-denominators" class="level2">
 <h2 class="anchored" data-anchor-id="capacity-with-each-years-own-denominators">4. Capacity, with each year’s own denominators</h2>
-<p>The capacity comparison highlights Leadership acted on two stations (Hodges Library (S06) and Student Union - UT (S08)) by increasing the dock capacity from 24 in 2025 to 32 in 2026. Cumberland Ave &amp; 22nd St (S25) was a new station added in 2026 so that is why it has no 2025 comparison.</p>
+<p>The capacity comparison highlights leadership acted on two stations (Hodges Library (S06) and Student Union - UT (S08)) by increasing the dock capacity from 24 in 2025 to 32 in 2026. Cumberland Ave &amp; 22nd St (S25) was a new station added in 2026 so that is why it has no 2025 comparison.</p>
 <p>Departures per dock are calculated using each year’s actual dock count (as calculated by the <code>dock_history</code> table in the <code>sql/schema.sql</code>), therefore historical dock counts are appropriately used for 2025’s capacity. This provides a year-correct measure of station activity relative to available capacity. Although departures per dock help describe station pressure, they do not independently establish whether a station experienced capacity shortages or unmet demand.</p>
 </section>
 <section id="memo-to-the-general-manager" class="level2">
 <h2 class="anchored" data-anchor-id="memo-to-the-general-manager">5. Memo to the General Manager</h2>
 <!-- TODO: 250-350 words, five-part structure, every number inline code,
      denominators on every percentage, banned words per the instructions. -->
+<p><strong>Bottom line</strong></p>
+<p><strong><em>Weather and calendar structure may have accounted for the recovery in non-members riding.One system for the entire analytical operation has been built to view the analyses that led to this result.</em></strong></p>
+<p><strong>Evidence</strong></p>
+<p>For the analyses, 2025 includes casual riders only as non-member riders, while 2026 bundles casual and day pass riders as non-member riders. To make the year over year comparisons comparable, analyses were conducted between January 1 - October 11 of 2025 and 2026 since this is the extent to the data from 2026.</p>
+<p>From October 11, 2025 to October 11, 2026, <code>r (int_daily_stats$casual[1] -``int_daily_stats$casual[2])``/ (``int_daily_stats$casual[1]``)</code>% of casual riders were lost. However, the total percentage of non-member (casual and day pass rider) trips on October 11 increased from <code>r``int_daily_stats$non_member[1]/sum(oct_25$trips)</code>% in 2025 (2.24136^{5} total trips) to 0.0010992% in 2026 (2.33803^{5} total trips), showing the impact of the Day Pass rider option.</p>
+<p><strong><em>Without</em></strong> controlling for weather and calendar structure, 2026 averaged 30.69 more non-member trips per day than 2025 (95% CI [9.77 – 51.62]). After adjusting for maximum temperature, minimum temperature, precipitation, weekday, and month, the estimated average difference increased to 40.48 more non-member trips per day between 2025 and 2026 (95% CI [30.96 – 50]; see figs/integration_daily_trips.png).</p>
+<p>The new Ride Knox employee and/or auditors can get everything from the analyses to the results from one command.</p>
+<p><strong>Interpretation</strong></p>
+<p>When we include weather and calendar structures in the analysis, we account for <strong><em>some</em></strong> variation in daily non-member trips across years and this information is not available when those variables are controlled for. However, these adjustments do not establish the cause of that increase from the naive model.</p>
+<p>This one system accomadates the successor coming in January, vendor contract renewal, and the auditors that want to know how our published numbers are produced.</p>
+<p><strong>Limitations</strong></p>
+<p>The one minute cutoff rule implemented in the analysis causes us to lose data points that may otherwise influence our analysis. We excluded trips longer than 24 hours (bikes likely never docked properly). S99 stations have been filtered out, but trips missing an end_station_id have been kept in for these analyses. We must use a comparable window because we don’t have data past October 11, 2026. There are stations that have been excluded because they were missing both end station IDs and end times. We don’t currently have information from our riders that could be influencing their riding (e.g., reasons for riding, etc.) other than weather and calendar structure. Other than the test stations (S99) that should not be included in any analyses, the other options were chosen to best represent valid trips, while not losing trips that may have operational problems that can be investigated by the op’s team at a later time.</p>
+<p><strong>Recommendation</strong></p>
+<p>We should consider collecting survey data from riders to include as variables other than weather and calendar structure. This handover can now be used and updated with every new vendor export.</p>
 </section>
 
 </main>

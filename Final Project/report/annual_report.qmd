@@ -97,7 +97,7 @@ monthly_figure |>
   filter(grepl("2026", month)) |>
   summarise(total_trips = sum(trips, na.rm = TRUE))
 
-ggplot(
+two_year_monthly_plot <- ggplot(
   monthly_figure,
   aes(x = month, y = trips, color = product_code, group = product_code)
 ) +
@@ -124,7 +124,7 @@ ggplot(
 
 ggsave(
   filename = "figs/two_year_monthly_by_prod.png",
-  plot = integration_plot,
+  plot = two_year_monthly_plot,
   width = 18,
   height = 6,
   dpi = 300
