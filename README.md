@@ -214,3 +214,10 @@ The build stops when a required command or stage returns a nonzero exit status. 
 - A per-file warehouse reconciliation check does not balance.
 - Quarto fails to render the annual report or produces an empty report/annual_report.html.
 - A required file for public-site staging is missing.
+
+
+## Reflection + AI disclosure 
+
+1.	Reflection: The handoff in my system that I believe is the most fragile is the one between Bash and Python where we load the warehouse from the files in the staged folder. It is the most fragile because any incorrect files that pass the previous checks in the build pipeline will affect all of the analyses, figures, and tables once they are loaded into the warehouse. Additionally, if the previous checks fail, a change in the file's structure (i.e., a column no longer contains the expected values), a missing reference file, or an unexpected column value could cause the loader to fail. If it fails, the downstream SQL extracts, R report, and GitHub Pages publication will also fail and may not happen at all. Real data teams spend much of their engineering effort validating inputs, standardizing formats, documenting assumptions, and reconciling outputs. Each tool working properly is not as important as having a pipeline with reliable handoffs between the tools.
+
+2. AI disclosure: I used a generative AI tool to organize the structure of working through project, making the tables in R, connecting index.md to Pages, understanding what Python buys me over Bash and what other tools there are out there for the TOOL-DEFENSE.md, formatting and compilation for the README.md, and to get the x-axis tick labels to be staggered for the Part 2 two-year picture in annual_report.qmd. Because we havent visited some of these topics (since the Bash and R module projects were released), I needed help understanding some of the files. All architecture decisions, code, analysis, and conclusions are my own.
