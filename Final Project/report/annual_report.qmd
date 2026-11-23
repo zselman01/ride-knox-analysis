@@ -376,7 +376,7 @@ ggsave(
 )
 ```
 
-### Interpretation
+### Integration Question Interpretation
 
 For the model analyses, 2025 includes casual riders only as non-member riders, while 2026 bundles casual and day pass riders as non-member riders. The naive model estimates that 2026 averaged `r round(year_effects$estimate[1], 2)` more non-member trips per day than 2025 (95% CI \[`r round(year_effects$conf.low[1], 2)` – `r round(year_effects$conf.high[1], 2)`\]). After adjusting for maximum temperature, minimum temperature, precipitation, weekday, and month, the estimated average difference increased to `r round(year_effects$estimate[2], 2)` more non-member trips per day between 2025 and 2026 (95% CI \[`r round(year_effects$conf.low[2], 2)` – `r round(year_effects$conf.high[2], 2)`\]; see figs/integration_daily_trips.png). The larger adjusted estimate/model suggests that weather and calendar structures account for **some** variation in daily non-member trips across years, information not available in the naive model. However, these adjustments do not establish the cause of that increase from the naive model.
 
@@ -421,7 +421,7 @@ knitr::kable(
 )
 ```
 
-The capacity comparison highlights Leadership acted on two stations (Hodges Library (S06) and Student Union - UT (S08)) by increasing the dock capacity from 24 in 2025 to 32 in 2026. Cumberland Ave & 22nd St (S25) was a new station added in 2026 so that is why it has no 2025 comparison.
+The capacity comparison highlights leadership acted on two stations (Hodges Library (S06) and Student Union - UT (S08)) by increasing the dock capacity from 24 in 2025 to 32 in 2026. Cumberland Ave & 22nd St (S25) was a new station added in 2026 so that is why it has no 2025 comparison.
 
 Departures per dock are calculated using each year's actual dock count (as calculated by the `dock_history` table in the `sql/schema.sql`), therefore historical dock counts are appropriately used for 2025's capacity. This provides a year-correct measure of station activity relative to available capacity. Although departures per dock help describe station pressure, they do not independently establish whether a station experienced capacity shortages or unmet demand.
 
@@ -431,3 +431,48 @@ Departures per dock are calculated using each year's actual dock count (as calcu
 <!-- TODO: 250-350 words, five-part structure, every number inline code,
      denominators on every percentage, banned words per the instructions. -->
 ```
+
+**Bottom line**
+
+***Weather and calendar structure may have accounted for the recovery in non-members riding.One system for the entire analytical operation has been built to view the analyses that led to this result.***
+
+**Evidence**
+
+For the analyses, 2025 includes casual riders only as non-member riders, while 2026 bundles casual and day pass riders as non-member riders. To make the year over year comparisons comparable, analyses were conducted between January 1 - October 11 of 2025 and 2026 since this is the extent to the data from 2026.
+
+```{r}
+#| label: memo-stats
+#| include: false
+
+int_daily_stats <- integration_daily |>
+  filter(date == "2025-10-11" | date == "2026-10-11")
+
+oct_25 <- monthly_figure |> 
+  filter(year == "2025")
+
+oct_26 <- monthly_figure |> 
+  filter(year == "2026")
+  
+
+sum(oct_26$trips)
+```
+
+From October 11, 2025 to October 11, 2026, ``` r (int_daily_stats$casual[1] -``int_daily_stats$casual[2])``/ (``int_daily_stats$casual[1]``) ```% of casual riders were lost. However, the total percentage of non-member (casual and day pass rider) trips on October 11 increased from ``` r``int_daily_stats$non_member[1]/sum(oct_25$trips) ```% in 2025 (`r sum(oct_25$trips)` total trips) to `r int_daily_stats$non_member[2]/sum(oct_26$trips)`% in 2026 (`r sum(oct_26$trips)` total trips), showing the impact of the Day Pass rider option.
+
+***Without*** controlling for weather and calendar structure, 2026 averaged `r round(year_effects$estimate[1], 2)` more non-member trips per day than 2025 (95% CI \[`r round(year_effects$conf.low[1], 2)` – `r round(year_effects$conf.high[1], 2)`\]). After adjusting for maximum temperature, minimum temperature, precipitation, weekday, and month, the estimated average difference increased to `r round(year_effects$estimate[2], 2)` more non-member trips per day between 2025 and 2026 (95% CI \[`r round(year_effects$conf.low[2], 2)` – `r round(year_effects$conf.high[2], 2)`\]; see figs/integration_daily_trips.png).
+
+The new Ride Knox employee and/or auditors can get everything from the analyses to the results from one command.
+
+**Interpretation**
+
+When we include weather and calendar structures in the analysis, we account for ***some*** variation in daily non-member trips across years and this information is not available when those variables are controlled for. However, these adjustments do not establish the cause of that increase from the naive model.
+
+This one system accomadates the successor coming in January, vendor contract renewal, and the auditors that want to know how our published numbers are produced.
+
+**Limitations**
+
+The one minute cutoff rule implemented in the analysis causes us to lose data points that may otherwise influence our analysis. We excluded trips longer than 24 hours (bikes likely never docked properly). S99 stations have been filtered out, but trips missing an end_station_id have been kept in for these analyses. We must use a comparable window because we don't have data past October 11, 2026. There are stations that have been excluded because they were missing both end station IDs and end times. We don't currently have information from our riders that could be influencing their riding (e.g., reasons for riding, etc.) other than weather and calendar structure. Other than the test stations (S99) that should not be included in any analyses, the other options were chosen to best represent valid trips, while not losing trips that may have operational problems that can be investigated by the op's team at a later time.
+
+**Recommendation**
+
+We should consider collecting survey data from riders to include as variables other than weather and calendar structure. This handover can now be used and updated with every new vendor export.
