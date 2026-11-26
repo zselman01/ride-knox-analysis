@@ -138,6 +138,8 @@ cp ../2026_bundle/memo.md docs/2026_memo.md
 mkdir -p ../docs
 cp -R docs/. ../docs/
 
+cp ../README.md ../docs/
+
 stamp "Stage 7 COMPLETE: Public page staged"
 
 # TODO stage 8: write a build summary a stranger could read
