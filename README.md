@@ -136,6 +136,8 @@ bash build_all.sh
 
 The stages run in order. Each stage prints a timestamped START and COMPLETE message. The script uses set -euo pipefail, so a failing command stops the build rather than allowing later stages to proceed.
 
+Click here for the ![Architecture Diagram]("Final Project/pipeline/diagram.png") for the diagram. 
+
 | Stage | Reads | Writes | What happens |
 |---|---|---|---|
 | 0. Reset | Existing generated directories and files | Clean working directories | Removes prior `incoming/`, `accepted/`, `quarantine/`, `staging/`, and `out/` directories; removes the configured database and generated report/publication copies. Preserves raw data and source files. |
