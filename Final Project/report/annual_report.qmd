@@ -93,7 +93,7 @@ knitr::kable(ledger, caption = paste0(
 monthly_figure <- monthly |>
   filter(!(month == "2025-11") & !(month == "2025-12"))
 
-monthly_figure |>
+total_trips <- monthly_figure |>
   filter(grepl("2026", month)) |>
   summarise(total_trips = sum(trips, na.rm = TRUE))
 
@@ -121,6 +121,8 @@ two_year_monthly_plot <- ggplot(
     plot.title = element_text(size = rel(1.3)),
     text = element_text(size = 20)
   )
+
+two_year_monthly_plot
 
 ggsave(
   filename = "figs/two_year_monthly_by_prod.png",
@@ -450,17 +452,14 @@ For the analyses, 2025 includes casual riders only as non-member riders, while 2
 int_daily_stats <- integration_daily |>
   filter(date == "2025-10-11" | date == "2026-10-11")
 
-oct_25 <- monthly_figure |> 
-  filter(year == "2025")
+oct_25 <- monthly_figure |>
+  filter(month == "2025-10")
 
 oct_26 <- monthly_figure |> 
-  filter(year == "2026")
-  
-
-sum(oct_26$trips)
+  filter(month == "2026-10")
 ```
 
-From October 11, 2025 to October 11, 2026, ``` r (int_daily_stats$casual[1] -``int_daily_stats$casual[2])``/ (``int_daily_stats$casual[1]``) ```% of casual riders were lost. However, the total percentage of non-member (casual and day pass rider) trips on October 11 increased from ``` r``int_daily_stats$non_member[1]/sum(oct_25$trips) ```% in 2025 (`r sum(oct_25$trips)` total trips) to `r int_daily_stats$non_member[2]/sum(oct_26$trips)`% in 2026 (`r sum(oct_26$trips)` total trips), showing the impact of the Day Pass rider option.
+When comparing October 11, 2025 to October 11, 2026, `r round((int_daily_stats$casual[1] -int_daily_stats$casual[2])/(int_daily_stats$casual[1])*100,1)`% of casual riders were lost. However, the total percentage of non-member (casual and day pass rider) trips on October 11 increased from `r round(int_daily_stats$non_member[1]/sum(oct_25$trips)*100,2)`% in 2025 (`r sum(oct_25$trips)` total trips) to `r round(int_daily_stats$non_member[2]/sum(oct_26$trips)*100,2)`% in 2026 (`r sum(oct_26$trips)` total trips), showing the impact of the Day Pass rider option.
 
 ***Without*** controlling for weather and calendar structure, 2026 averaged `r round(year_effects$estimate[1], 2)` more non-member trips per day than 2025 (95% CI \[`r round(year_effects$conf.low[1], 2)` – `r round(year_effects$conf.high[1], 2)`\]). After adjusting for maximum temperature, minimum temperature, precipitation, weekday, and month, the estimated average difference increased to `r round(year_effects$estimate[2], 2)` more non-member trips per day between 2025 and 2026 (95% CI \[`r round(year_effects$conf.low[2], 2)` – `r round(year_effects$conf.high[2], 2)`\]; see figs/integration_daily_trips.png).
 
