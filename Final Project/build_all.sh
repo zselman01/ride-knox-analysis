@@ -27,7 +27,7 @@ OUT_DIR="out"
 
 stamp() { echo "[$(date +%Y-%m-%dT%H:%M:%S)] $*"; }
 
-[ -d "$DATA_DIR" ] || { echo "ERROR: DATA_DIR=$DATA_DIR not found" >&2; exit 1; }
+[ -d "$DATA_DIR" ] || { echo "ERROR: DATA_DIR=$DATA_DIR not found" | tee logs/output.log >&2; exit 1; }
 
 stamp "STARTING BUILD"
 
@@ -106,14 +106,14 @@ echo
 stamp "Stage 6 START: Rendering report"
 
 if ! command -v quarto >/dev/null 2>&1; then
-    echo "ERROR: Quarto is required to render the annual report." >&2
+    echo "ERROR: Quarto is required to render the annual report." | tee -a logs/output.log >&2
     exit 1
 fi
 
 quarto render report/annual_report.qmd --to html
 
 [ -s report/annual_report.html ] || {
-    echo "ERROR: Annual report rendering did not produce report/annual_report.html" >&2
+    echo "ERROR: Annual report rendering did not produce report/annual_report.html" | tee -a logs/output.log >&2
     exit 1
 }
 
@@ -185,7 +185,7 @@ WEATHER_COUNT=$(sqlite3 "$DB" "SELECT COUNT(*) FROM weather;")
     echo "--------------"
     echo "Intake decisions: $OUT_DIR/gate_receipts.csv"
     echo "Preparation decisions: $OUT_DIR/prepare_receipts.csv"
-    echo "System reconciliation: $OUT_DIR/system_reconciliation.csv"
+    echo "System reconciliation ledger: $OUT_DIR/system_reconciliation.csv"
     echo
     echo "SQL extracts are available in: $OUT_DIR/"
 } > "$OUT_DIR/build_summary.txt"

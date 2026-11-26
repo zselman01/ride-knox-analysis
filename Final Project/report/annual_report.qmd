@@ -97,7 +97,7 @@ monthly_figure |>
   filter(grepl("2026", month)) |>
   summarise(total_trips = sum(trips, na.rm = TRUE))
 
-ggplot(
+two_year_monthly_plot <- ggplot(
   monthly_figure,
   aes(x = month, y = trips, color = product_code, group = product_code)
 ) +
@@ -124,7 +124,7 @@ ggplot(
 
 ggsave(
   filename = "figs/two_year_monthly_by_prod.png",
-  plot = integration_plot,
+  plot = two_year_monthly_plot,
   width = 18,
   height = 6,
   dpi = 300
@@ -467,7 +467,7 @@ The new Ride Knox employee and/or auditors can get everything from the analyses 
 
 When we include weather and calendar structures in the analysis, we account for ***some*** variation in daily non-member trips across years and this information is not available when those variables are controlled for. However, these adjustments do not establish the cause of that increase from the naive model.
 
-This one system accomadates the successor coming in January, vendor contract renewal, and the auditors that want to know how our published numbers are produced.
+This one system accommodates the successor coming in January, vendor contract renewal, and the auditors that want to know how our published numbers are produced.
 
 **Limitations**
 
