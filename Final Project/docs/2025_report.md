@@ -6,7 +6,7 @@
 
 **SUBJECT:** Did the 2026 changes work?
 
----
+
 
 ## Bottom Line
 
@@ -18,13 +18,13 @@
 
 
 
-## Evidence 
+## Evidence
 
 For the ridership question, in comparison to the increase in member riders, the number of casual riders drops significantly (10.4% out of 31,279 (June) - 26,926 (July) total riders) from June to July 2025 (see Member vs. Casual Trips per Month, 2025 chart above). For the pressure question, slack seems to be present especially in the UT Campus neighborhood, where there is a lot of pressure, but not a lot of docks (e.g., The Hill with only 12 docks but about 1,156 trips per dock, and Hodges and the Student Union with only 24 docks have about 1,063 and 1,015 trips per dock respectively, etc.). Additionally, there is roughly a 1,000-trip difference between the top and bottom stations. Also, see the Trips per dock by Station Names, 2025 chart above.
 
 
 
-## Interpretation 
+## Interpretation
 
 We can suspect that the decline in casual riders is from the price increase that was introduced in July 2025.
 
