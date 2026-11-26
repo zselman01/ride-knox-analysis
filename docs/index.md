@@ -1,5 +1,3 @@
-# Ride Knox: Two Years, One System
-
 <!-- STARTER SKELETON. The front page of the public site, updated for the
      Final Project. TODO: your headline finding (the Integration Question
      verdict, with its range), your lead figure, and working links. -->
@@ -16,4 +14,4 @@
 
 - To view the full 2026 mid-year memo, please visit **[2026 Memo](2026_memo.md)**
 
-- To view the full README, please visit **[README](../README.md)**
+- To view the full README, please visit **[README](README.md)**
