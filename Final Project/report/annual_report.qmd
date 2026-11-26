@@ -32,14 +32,14 @@ ledger   <- read_csv("../out/system_reconciliation.csv")
 
 theme_board <- theme_minimal(base_size = 13) +
   theme(plot.title = element_text(
-    size = 14,
+    size = 12,
     face = "bold",
     hjust = 0.5,
     lineheight = 1.1,
     margin = margin(b = 8)
   ),
-  plot.title.position = "plot",
-  plot.subtitle.position = "plot")
+  plot.title.position = "plot")
+
 dir.create("figs", showWarnings = FALSE)
 ```
 
@@ -69,7 +69,7 @@ The October 2026 delivery was released from the initial pipeline quarantine beca
 
 ```{r}
 #| label: ledger-table
-#| include: false
+#| echo: false
 
 knitr::kable(ledger, caption = paste0(
   "System reconciliation ledger: every raw row of every source file, ",
@@ -88,7 +88,7 @@ knitr::kable(ledger, caption = paste0(
 #| fig-cap: "Monthly trips during the comparable January 1–October 11 periods in 2025 and 2026 for each rider type (casual, member, and day pass (for 2026))."
 #| fig-width: 18
 #| fig-height: 6
-#| include: false
+#| echo: false
 
 monthly_figure <- monthly |>
   filter(!(month == "2025-11") & !(month == "2025-12"))
@@ -156,7 +156,7 @@ stopifnot(wx_rows == wx_dates)
 
 ```{r}
 #| label: integration-question
-#| include: false
+#| echo: false
 
 # Keep the same January 1–October 11 window for both years (comparable window).
 integration_trips <- daily |>
@@ -280,7 +280,7 @@ weather_model_data <- integration_daily |>
 
 ```{r}
 #| label: integration-models
-#| include: false
+#| echo: false
 
 # Naive model: compares average daily non-member trips by year.
 # Uses all 568 daily observations (includes dates with missing precipitation values).
@@ -343,7 +343,7 @@ knitr::kable(
 #| fig-cap: "Daily non-member trips during the comparable January 1–October 11 periods in 2025 and 2026. Lines show separate linear trends for each year."
 #| fig-width: 11
 #| fig-height: 6
-#| include: false
+#| echo: false
 
 integration_plot <- ggplot(
   integration_daily,
@@ -363,14 +363,17 @@ integration_plot <- ggplot(
     color = "Year",
     caption = "n = 562 trips/year, Ride Knox export."
   ) +
-  theme_board
+  theme_board +
+  theme(
+    plot.subtitle = element_text(hjust = 0.5)
+  )
 
 integration_plot
 
 ggsave(
   filename = "figs/integration_daily_trips.png",
   plot = integration_plot,
-  width = 6,
+  width = 8,
   height = 3,
   dpi = 300
 )
@@ -384,7 +387,7 @@ For the model analyses, 2025 includes casual riders only as non-member riders, w
 
 ```{r}
 #| label: capacity-comparison
-#| include: false
+#| echo: false
 
 # Focus on stations with capacity changes and the newly added station.
 capacity_comparison <- capacity |>
